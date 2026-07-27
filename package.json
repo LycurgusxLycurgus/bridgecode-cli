@@ -4,7 +4,7 @@
   "description": "Install, update, and verify Bridgecode repo-local instructions.",
   "type": "module",
   "bin": {
-    "bridgecode": "./bin/bridgecode.mjs"
+    "bridgecode": "bin/bridgecode.mjs"
   },
   "engines": {
     "node": ">=22"
