@@ -1,0 +1,49 @@
+{
+  "name": "@bridgecode/cli",
+  "version": "4.1.0",
+  "description": "Install, update, and verify Bridgecode repo-local instructions.",
+  "type": "module",
+  "bin": {
+    "bridgecode": "./bin/bridgecode.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "AGENTS.md",
+    "README.md",
+    "README_HUMAN.txt",
+    "CHANGELOG.md",
+    "LICENSE",
+    "payload-manifest.json",
+    "bin/",
+    "src/",
+    "bridgecode/"
+  ],
+  "scripts": {
+    "build:manifest": "node scripts/build-manifest.mjs",
+    "prepack": "npm run build:manifest",
+    "test": "node --test",
+    "test:tarball": "node --test test/tarball.test.mjs"
+  },
+  "keywords": [
+    "codex",
+    "agents.md",
+    "agent",
+    "instructions",
+    "cli"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LycurgusxLycurgus/bridgecode-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LycurgusxLycurgus/bridgecode-cli/issues"
+  },
+  "homepage": "https://github.com/LycurgusxLycurgus/bridgecode-cli#readme"
+}

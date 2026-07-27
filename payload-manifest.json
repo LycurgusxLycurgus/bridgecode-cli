@@ -1,0 +1,14 @@
+{
+  "package": "@bridgecode/cli",
+  "version": "4.1.0",
+  "schemaVersion": 1,
+  "files": {
+    "AGENTS.md": "f20cd9165b25cd5879ac50f40a9e5d8a72c62f56d4c15ce91906c944ab7cd778",
+    "README_HUMAN.txt": "ba50784a9f1a396eb384f0d845b97082b2f98173585b12764adb4e3122d744ae",
+    "bridgecode/general-functions.md": "207d9f20cc3025bb8d6bd7b98fa1e8ff7fbb041f0741dbee3c42ce9c7c193ea0",
+    "bridgecode/specific-functions/frontend-design.md": "dff003580ada9490ba9fb36ddedfe3082b8e05cd910c3b0f295e891b016851fa",
+    "bridgecode/specific-functions/general-processflow.md": "22554f57664dbdcc36d6bbd1b647cc9729e73d2803304c5fe11837e78cdae8de",
+    "bridgecode/specific-functions/monoprompting.md": "588f2b3e5e72675c973befe004627ed7e9bd37e82818c5a3e3a44db65894bf00",
+    "bridgecode/specific-functions/specific-processflow.md": "fe7a9e556ce53f61e1c7e035cd83cf4bd50b04db7e16b782265a318ada84d7f1"
+  }
+}
