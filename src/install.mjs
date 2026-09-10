@@ -1,295 +1,114 @@
-import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { inspectInstallation } from "./doctor.mjs";
-import {
-  assertInstructionMode,
-  parseBootstrap,
-  removeBootstrap,
-  selectInstructionPaths,
-  upsertBootstrap,
-} from "./instructions.mjs";
-import {
-  assertProjectDirectory,
-  loadPackageContext,
-  METADATA_PATH,
-  readPayloadFile,
-  resolveInside,
-  SCHEMA_VERSION,
-  sha256,
-  validateRelativePath,
-} from "./manifest.mjs";
-import {
-  adoptUnmarkedAgents,
-  assertArchitectureFirst,
-  buildManagedAgents,
-  parseManagedAgents,
-  splitCanonicalAgents,
-} from "./repo-rules.mjs";
-import { applyTransaction } from "./transaction.mjs";
+import { readFile } from "node:fs/promises";
+import { assertProjectDirectory, loadPackageContext, readOptional, METADATA_PATH, HOOK_PATH, sha256, legacyContext, validateRelativePath } from "./manifest.mjs";
+import { parseManagedAgents, buildManagedAgents, adoptUnmarkedAgents, adoptLegacy, pendingRulesBlock, parseRules, isRulesPopulated } from "./repo-rules.mjs";
+import { assertInstructionMode, selectInstructionPaths, upsertBootstrap, removeBootstrap, parseBootstrap } from "./instructions.mjs";
+import { HOOK_CONFIG, mergeHooks } from "./hooks.mjs";
+import { verifyInstalled, instructionBudget } from "./verification.mjs";
+import { applyTransaction, JOURNAL } from "./transaction.mjs";
 
-async function readOptional(target) {
-  return readFile(target).catch((error) => {
-    if (error.code === "ENOENT") return null;
-    throw error;
-  });
-}
-
-async function loadMetadata(projectRoot) {
-  const bytes = await readOptional(resolveInside(projectRoot, METADATA_PATH, "metadata path"));
-  if (!bytes) return null;
-  try {
-    return JSON.parse(bytes.toString("utf8"));
-  } catch {
-    throw new Error("Bridgecode installation metadata is malformed; no files were changed");
+export async function prepareLifecycle({command,project=".",packageRoot,dryRun=false,instructionFiles,instructionFile=[],hooks,transactionFailAfterWrites=0}={}) {
+  const root=await assertProjectDirectory(project),context=await loadPackageContext(packageRoot);
+  const preconditions={}; const cache=new Map();
+  async function read(p){ if(!cache.has(p)){const b=await readOptional(root,p);cache.set(p,b);preconditions[p]=b?sha256(b):null;} return cache.get(p); }
+  if(await read(JOURNAL))throw new Error("Pending transaction; run bridgecode recover before updating");
+  // Journal is created by our own transaction after this preflight.
+  delete preconditions[JOURNAL];
+  const metadataBytes=await read(METADATA_PATH),metadata=metadataBytes?JSON.parse(metadataBytes):null;
+  if(metadata?.schemaVersion===2 && metadata.projectRoot!==root)throw new Error("Installation belongs to a different path; relocate with a supported migration");
+  const agentsBytes=await read("AGENTS.md"),text=agentsBytes?.toString("utf8")??"";
+  const canonical=(await readFile(path.join(context.packageRoot,"AGENTS.md"))).toString("utf8"),version=context.packageJson.version;
+  let parsed=parseManagedAgents(text),rules="",mode="",adoptedLegacy=false,oldHashes={};
+  if(metadata){await verifyInstalled(context,metadata,read);mode="replace managed core";}
+  else if(parsed)throw new Error("Marked installation has no trustworthy metadata; recover installation metadata first");
+  else if(adoptUnmarkedAgents(text,canonical)){mode="adopt current source";}
+  else if(text.includes("Bridgecode 4.1 Processflow Router")||text.includes("## 5) Specific Repo Rules")){
+    const old=await legacyContext(context.packageRoot);
+    rules=adoptLegacy(text,old.files["AGENTS.md"]).rules;oldHashes=old.hashes;adoptedLegacy=true;mode="adopt legacy 4.1";
+  }else{
+    if(command==="update")throw new Error("Bridgecode is not installed; run install");
+    if(/Bridgecode\s+\d/i.test(text))throw new Error("Unrecognized Bridgecode source; export and reconcile it before installation");
+    mode=text?"append managed core":"create AGENTS.md";
   }
-}
-
-async function assertRecordedStateClean(projectRoot, metadata, agentsText) {
-  if (metadata.schemaVersion !== SCHEMA_VERSION || metadata.package !== "@bridgecode/cli") {
-    throw new Error("Installed Bridgecode metadata has an unsupported identity or schema");
+  let nextText;
+  const block=buildManagedAgents(canonical,version);
+  if(parsed){
+    rules=parsed.rules;
+    nextText=text.slice(0,parsed.start)+block+text.slice(parsed.end);
+    if(parsed.schema===1)nextText+=pendingRulesBlock(rules);
+  }else if(adoptedLegacy)nextText=block+pendingRulesBlock(rules)+"\n";
+  else if(mode==="adopt current source")nextText=block+"\n";
+  else nextText=text+(text?(text.endsWith("\n")?"\n":"\n\n"):"")+block+"\n";
+  const changes=new Map();
+  async function set(p,bytes){
+    const current=await read(p);
+    if((current?sha256(current):null)!==(bytes?sha256(bytes):null))changes.set(p,bytes);
   }
-  for (const [relativePath, expectedHash] of Object.entries(metadata.managedFiles ?? {})) {
-    validateRelativePath(relativePath, "managed metadata path");
-    const bytes = await readOptional(resolveInside(projectRoot, relativePath, "managed path"));
-    if (!bytes || sha256(bytes) !== expectedHash) {
-      throw new Error(`Managed file conflict: ${relativePath}; no files were changed`);
-    }
+  await set("AGENTS.md",Buffer.from(nextText));
+  const previousManaged=metadata?.managedFiles??Object.fromEntries(Object.entries(oldHashes).filter(([p])=>p!=="AGENTS.md"));
+  const desired={};
+  for(const [p,h]of Object.entries(context.manifest.files)){
+    if(p==="AGENTS.md")continue;
+    const current=await read(p);
+    if(current&&!Object.hasOwn(previousManaged,p)&&(mode!=="adopt current source"||sha256(current)!==h))throw new Error("New payload path conflicts with repository content: "+p);
+    if(current&&Object.hasOwn(previousManaged,p)&&sha256(current)!==previousManaged[p])throw new Error("Managed file conflict: "+p);
+    desired[p]=h;await set(p,await readFile(path.join(context.packageRoot,p)));
   }
-  const agents = parseManagedAgents(agentsText);
-  if (!agents || agents.managedHash !== metadata.agents?.managedHash) {
-    throw new Error("Managed AGENTS.md content was modified; no files were changed");
+  const hooksEnabled=hooks??metadata?.hooksEnabled??true;
+  if(hooksEnabled||metadata?.hooksEnabled){
+    const current=await read(HOOK_PATH);
+    if(current && !Object.hasOwn(previousManaged,HOOK_PATH))throw new Error("Unowned hook script collision");
+    const merged=mergeHooks(await read(HOOK_CONFIG),root,metadata?.hookEntries,hooksEnabled);
+    await set(HOOK_CONFIG,merged.bytes);
+    if(hooksEnabled){desired[HOOK_PATH]=sha256(context.hook);await set(HOOK_PATH,context.hook);}
   }
-  for (const [relativePath, expectedHash] of Object.entries(metadata.bootstraps ?? {})) {
-    validateRelativePath(relativePath, "bootstrap metadata path");
-    const bytes = await readOptional(resolveInside(projectRoot, relativePath, "bootstrap path"));
-    const bootstrap = bytes ? parseBootstrap(bytes.toString("utf8")) : null;
-    if (!bootstrap || bootstrap.hash !== expectedHash) {
-      throw new Error(`Managed bootstrap conflict: ${relativePath}; no files were changed`);
-    }
+  for(const [p,h]of Object.entries(previousManaged)){
+    if(Object.hasOwn(desired,p))continue;
+    const bytes=await read(p);
+    if(bytes && sha256(bytes)!==h)throw new Error("Retired managed file was modified: "+p);
+    if(bytes)await set(p,null);
   }
-}
-
-async function assertUnrecordedManagedFilesSafe(projectRoot, context) {
-  for (const [relativePath, expectedHash] of Object.entries(context.manifest.files)) {
-    if (relativePath === "AGENTS.md") continue;
-    const bytes = await readOptional(resolveInside(projectRoot, relativePath, "managed path"));
-    if (bytes && sha256(bytes) !== expectedHash) {
-      throw new Error(
-        `Existing package-managed path is not an exact Bridgecode payload: ${relativePath}; no files were changed`,
-      );
-    }
-  }
-}
-
-function appendManagedSection(existingText, managedBlock) {
-  if (existingText.length === 0) return `${managedBlock}\n`;
-  const eol = existingText.includes("\r\n") ? "\r\n" : "\n";
-  const separator = existingText.endsWith("\n") ? eol : `${eol}${eol}`;
-  return `${existingText}${separator}${managedBlock}${eol}`;
-}
-
-function replaceManagedSection(existingText, parsed, managedBlock) {
-  return `${existingText.slice(0, parsed.start)}${managedBlock}${existingText.slice(parsed.end)}`;
-}
-
-async function prepareLifecycle({
-  command,
-  project = ".",
-  packageRoot,
-  dryRun = false,
-  instructionFiles,
-  instructionFile = [],
-  transactionFailAfterWrites,
-} = {}) {
-  const projectRoot = await assertProjectDirectory(project);
-  const context = await loadPackageContext(packageRoot);
-  const version = context.packageJson.version;
-  const metadata = await loadMetadata(projectRoot);
-  const agentsTarget = path.join(projectRoot, "AGENTS.md");
-  const agentsBytes = await readOptional(agentsTarget);
-  const agentsText = agentsBytes?.toString("utf8") ?? "";
-  const canonicalText = (await readPayloadFile(context, "AGENTS.md")).toString("utf8");
-  const templateRules = splitCanonicalAgents(canonicalText).templateRules.replace(/\r?\n$/, "");
-
-  if (metadata) {
-    await assertRecordedStateClean(projectRoot, metadata, agentsText);
-  } else {
-    await assertUnrecordedManagedFilesSafe(projectRoot, context);
-  }
-
-  let parsed = parseManagedAgents(agentsText);
-  let repoRules;
-  let agentsMode;
-  if (parsed) {
-    repoRules = parsed.rules;
-    agentsMode = "replace marked Bridgecode section";
-    if (!metadata) {
-      const expected = parseManagedAgents(buildManagedAgents(canonicalText, version, repoRules));
-      if (parsed.managedHash !== expected.managedHash) {
-        throw new Error(
-          "Marked Bridgecode AGENTS.md has no trustworthy metadata and differs from this payload",
-        );
-      }
-    }
-  } else {
-    const adopted = agentsText.length > 0 ? adoptUnmarkedAgents(agentsText, canonicalText) : null;
-    if (adopted) {
-      repoRules = adopted.rules;
-      agentsMode = "adopt unmarked Bridgecode 4.1";
-    } else {
-      if (command === "update") {
-        throw new Error("Bridgecode is not installed; run install before update");
-      }
-      repoRules = templateRules;
-      agentsMode = agentsText.length === 0 ? "create AGENTS.md" : "append to unrelated AGENTS.md";
-    }
-  }
-  assertArchitectureFirst(repoRules);
-
-  const managedBlock = buildManagedAgents(canonicalText, version, repoRules);
-  const expectedAgents = parseManagedAgents(managedBlock);
-  const nextAgentsText = parsed
-    ? replaceManagedSection(agentsText, parsed, managedBlock)
-    : agentsMode === "adopt unmarked Bridgecode 4.1"
-      ? `${managedBlock}\n`
-      : appendManagedSection(agentsText, managedBlock);
-
-  const effectiveMode =
-    instructionFiles ?? (metadata ? metadata.instructionMode : "auto");
+  const effectiveMode=instructionFiles??metadata?.instructionMode??"auto";
   assertInstructionMode(effectiveMode);
-  const claudeExists = Boolean(await readOptional(path.join(projectRoot, "CLAUDE.md")));
-  const previousBootstrapPaths = metadata ? Object.keys(metadata.bootstraps ?? {}) : null;
-  const desiredBootstrapPaths = selectInstructionPaths({
-    mode: instructionFiles === undefined && metadata ? undefined : effectiveMode,
-    customPaths: instructionFile,
-    existingClaude: claudeExists,
-    previousPaths: previousBootstrapPaths,
-  });
-  const reservedPaths = new Set([METADATA_PATH, ...Object.keys(context.manifest.files)]);
-  for (const relativePath of desiredBootstrapPaths) {
-    if (reservedPaths.has(relativePath)) {
-      throw new Error(`Instruction bootstrap path overlaps a managed target: ${relativePath}`);
-    }
+  const paths=selectInstructionPaths({mode:instructionFiles===undefined&&metadata?undefined:effectiveMode,customPaths:instructionFile,existingClaude:Boolean(await read("CLAUDE.md")),previousPaths:metadata?.instructionFiles});
+  const reserved=new Set([...Object.keys(context.manifest.files),...Object.keys(previousManaged),METADATA_PATH,HOOK_PATH,HOOK_CONFIG,JOURNAL]);
+  for(const p of paths){validateRelativePath(p,"instruction path");const lower=p.toLowerCase();if([...reserved].some(r=>r.toLowerCase()===lower)||/^(?:\.git|\.agents|\.codex|\.bridgecode|agentic)(?:\/|$)/i.test(p))throw new Error("Instruction bootstrap overlaps reserved path: "+p);}
+  if(new Set(paths.map(p=>p.toLowerCase())).size!==paths.length)throw new Error("Instruction paths alias each other");
+  const bootstraps={};
+  for(const p of new Set([...paths,...Object.keys(metadata?.bootstraps??{})])){
+    const old=(await read(p))?.toString("utf8")??"";
+    if(parseBootstrap(old)&&!Object.hasOwn(metadata?.bootstraps??{},p))throw new Error("Unrecorded bootstrap ownership: "+p);
+    if(paths.includes(p)){const out=upsertBootstrap(old,version);bootstraps[p]=sha256(out.block);await set(p,Buffer.from(out.text));}
+    else{const out=removeBootstrap(old);await set(p,out.trim()?Buffer.from(out):null);}
   }
-
-  const changes = [];
-  const currentAgentsHash = agentsBytes ? sha256(agentsBytes) : null;
-  const nextAgentsBytes = Buffer.from(nextAgentsText);
-  if (currentAgentsHash !== sha256(nextAgentsBytes)) {
-    changes.push({ path: "AGENTS.md", content: nextAgentsBytes });
-  }
-
-  const managedFiles = {};
-  for (const [relativePath, hash] of Object.entries(context.manifest.files)) {
-    if (relativePath === "AGENTS.md") continue;
-    const bytes = await readPayloadFile(context, relativePath);
-    managedFiles[relativePath] = hash;
-    const current = await readOptional(resolveInside(projectRoot, relativePath, "managed path"));
-    if (!current || sha256(current) !== hash) changes.push({ path: relativePath, content: bytes });
-  }
-
-  const bootstraps = {};
-  const allBootstrapPaths = new Set([
-    ...desiredBootstrapPaths,
-    ...Object.keys(metadata?.bootstraps ?? {}),
-  ]);
-  for (const relativePath of [...allBootstrapPaths].sort()) {
-    const target = resolveInside(projectRoot, relativePath, "bootstrap path");
-    const currentBytes = await readOptional(target);
-    const currentText = currentBytes?.toString("utf8") ?? "";
-    if (desiredBootstrapPaths.includes(relativePath)) {
-      const updated = upsertBootstrap(currentText, version);
-      bootstraps[relativePath] = sha256(updated.block);
-      if (!currentBytes || sha256(currentBytes) !== sha256(Buffer.from(updated.text))) {
-        changes.push({ path: relativePath, content: Buffer.from(updated.text) });
-      }
-    } else {
-      const updated = removeBootstrap(currentText);
-      if (updated !== currentText) {
-        changes.push({
-          path: relativePath,
-          content: updated.trim().length === 0 ? null : Buffer.from(updated),
-        });
-      }
-    }
-  }
-
-  const nextMetadata = {
-    package: context.packageJson.name,
-    version,
-    schemaVersion: SCHEMA_VERSION,
-    instructionMode: effectiveMode,
-    instructionFiles: desiredBootstrapPaths,
-    managedFiles: Object.fromEntries(Object.entries(managedFiles).sort()),
-    agents: {
-      path: "AGENTS.md",
-      managedHash: expectedAgents.managedHash,
-    },
-    bootstraps: Object.fromEntries(Object.entries(bootstraps).sort()),
-  };
-  const metadataBytes = Buffer.from(`${JSON.stringify(nextMetadata, null, 2)}\n`);
-  const currentMetadataBytes = await readOptional(
-    resolveInside(projectRoot, METADATA_PATH, "metadata path"),
-  );
-  if (!currentMetadataBytes || sha256(currentMetadataBytes) !== sha256(metadataBytes)) {
-    changes.push({ path: METADATA_PATH, content: metadataBytes });
-  }
-
-  const summary = {
-    command,
-    projectRoot,
-    version,
-    dryRun,
-    agentsMode,
-    changes: changes.map((change) => ({
-      path: change.path,
-      action: change.content === null ? "remove managed block/file" : "write",
-    })),
-    repoRulesHash: sha256(Buffer.from(repoRules)),
-  };
-
-  if (!dryRun && changes.length > 0) {
-    await applyTransaction(projectRoot, changes, {
-      failAfterWrites: transactionFailAfterWrites,
-      postCheck: async () => {
-        const report = await inspectInstallation({ projectRoot, packageContext: context });
-        if (!report.ok) {
-          const failures = report.checks
-            .filter((check) => !check.ok)
-            .map((check) => `${check.name}: ${check.detail}`)
-            .join("; ");
-          throw new Error(`post-write doctor failed: ${failures}`);
-        }
-      },
-    });
+  // Reject aliasing between all managed/shared paths, including case-insensitive hosts.
+  const all=[...Object.keys(desired),"AGENTS.md",...paths,HOOK_CONFIG,METADATA_PATH];
+  if(new Set(all.map(p=>p.toLowerCase())).size!==all.length)throw new Error("Managed target paths alias each other");
+  const parsedNext=parseManagedAgents(nextText);
+  const next={package:"@bridgecode/cli",version,schemaVersion:2,projectRoot:root,instructionMode:effectiveMode,instructionFiles:paths,managedFiles:desired,agents:{path:"AGENTS.md",managedHash:parsedNext.managedHash},bootstraps,hooksEnabled,hookEntries:null};
+  if(hooksEnabled){const {hookEntries,entryHash}=await import("./hooks.mjs");next.hookEntries=Object.fromEntries(Object.entries(hookEntries(root)).map(([k,v])=>[k,entryHash(v)]));}
+  await set(METADATA_PATH,Buffer.from(JSON.stringify(next,null,2)+"\n"));
+  const projected=async p=>changes.has(p)?changes.get(p):read(p);
+  await instructionBudget(projected);
+  await verifyInstalled(context,next,projected);
+  const summary={command,projectRoot:root,version,dryRun,agentsMode:mode,changes:[...changes].map(([p,b])=>({path:p,action:b===null?"remove verified managed file":"write"})),migrationPending:isRulesPopulated(parseRules(nextText)?.rules??""),hooksEnabled,verified:false};
+  if(!dryRun){
+    const check=async()=>{await instructionBudget(p=>readOptional(root,p));await verifyInstalled(context,next,p=>readOptional(root,p));};
+    if(changes.size)await applyTransaction(root,[...changes].map(([p,content])=>({path:p,content})),{preconditions,postCheck:check,failAfterWrites:transactionFailAfterWrites});
+    else await check();
+    summary.verified=true;
   }
   return summary;
 }
-
-export async function installBridgecode(options = {}) {
-  return prepareLifecycle({ ...options, command: "install" });
+export const installBridgecode = options => prepareLifecycle({...options,command:"install"});
+export function formatLifecycleSummary(s){
+  return [
+    `${s.dryRun?"DRY RUN":"DONE"}: Bridgecode ${s.version} ${s.command} for ${s.projectRoot}`,
+    `AGENTS.md: ${s.agentsMode}`,
+    ...(s.changes.length?s.changes.map(c=>c.action+": "+c.path):["No changes required; installation is idempotent."]),
+    s.dryRun?"Projected verification passed; zero writes.":"Doctor passed for the installed payload and registration.",
+    s.migrationPending?"URGENT: legacy repo rules remain in AGENTS.md. Implement unresolved causal corrections within scope; map verified code/tests/constraints into agentic/architecture.md and remove each reconciled rule. Memory migration is INCOMPLETE.":"No legacy rules remain pending.",
+    s.hooksEnabled?"Codex hooks configured, not runtime-certified. Trust this project and review /hooks.":"Hooks disabled; follow AGENTS.md directly.",
+    "Start a fresh task/session after installing or updating."
+  ].join("\n");
 }
-
-export function formatLifecycleSummary(summary) {
-  const prefix = summary.dryRun ? "DRY RUN" : "DONE";
-  const lines = [
-    `${prefix}: Bridgecode ${summary.version} ${summary.command} for ${summary.projectRoot}`,
-    `AGENTS.md: ${summary.agentsMode}`,
-  ];
-  if (summary.changes.length === 0) {
-    lines.push("No file changes were required; the installation is idempotent.");
-  } else {
-    for (const change of summary.changes) lines.push(`${change.action}: ${change.path}`);
-  }
-  if (summary.dryRun) {
-    lines.push("Dry-run completed with zero writes.");
-  } else {
-    lines.push("Doctor passed after the transaction.");
-    lines.push(
-      "Start a fresh task/session now: Codex and other harnesses discover instruction files when a task/session begins.",
-    );
-  }
-  return lines.join("\n");
-}
-
-export { prepareLifecycle };

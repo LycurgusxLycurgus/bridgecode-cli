@@ -6,7 +6,7 @@ Use this process to create or correct a reusable prompt, workflow prompt, skill,
 
 Determine what the future model must accomplish, who or what supplies the input, where the prompt will run, what information will be available there, what ambiguity could make the output useless, how deterministic the output must be, and what observable gate proves success. Preserve the user’s actual intent and vocabulary. Inspect the target environment or existing instruction file when available instead of inventing constraints.
 
-Default to transferable principles because current capable models usually generalize better from a compact operating constitution than from long example transcripts. Add tighter schemas, ordered stages, fixed fields, or examples only when the reuse environment, evaluation method, or known failure pattern requires them. Examples are a last-mile control mechanism, not default decoration.
+Default to transferable principles expressed as a compact operating constitution. Add tighter schemas, ordered stages, fixed fields, or examples when the reuse environment, evaluation method, or known failure pattern requires them. Examples are a last-mile control mechanism.
 
 ## Prompt Contract
 
@@ -24,7 +24,7 @@ When a prompt must support autonomous agent or harness work, embed Best-Agent ju
 
 When correcting an existing prompt, identify the triggering signal, the desired future behavior, the scope where it should apply, the visible output contract, and the quality gate. Rewrite the smallest durable rule set that makes the next run behave correctly. Merge with the corresponding rule, replace obsolete wording, and remove contradictions or repeated corrections. Describe the desired behavior directly. Mention rejected behavior only when the contrast prevents a proven ambiguity more clearly than an affirmative rule can.
 
-Place a correction at the narrowest level that will reliably be read when triggered. Universal behavior belongs in the system or shared instruction layer, route behavior in the relevant process, repo behavior in repo rules, and one-time task constraints in the active request. Do not promote a local workaround into a universal rule without evidence that it generalizes.
+Place a correction at the narrowest level that will reliably be read when triggered. Universal behavior belongs in the system or shared instruction layer, route behavior in the relevant process, repo behavior in verified code, tests, and `agentic/architecture.md`, and one-time task constraints in the active request. Do not promote a local workaround into a universal rule without evidence that it generalizes.
 
 ## Writing and Output
 

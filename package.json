@@ -1,6 +1,6 @@
 {
   "name": "@bridgecode/cli",
-  "version": "4.1.0",
+  "version": "4.3.0",
   "description": "Install, update, and verify Bridgecode repo-local instructions.",
   "type": "module",
   "bin": {
@@ -18,13 +18,17 @@
     "payload-manifest.json",
     "bin/",
     "src/",
-    "bridgecode/"
+    "bridgecode/",
+    "hooks/",
+    "legacy/"
   ],
   "scripts": {
     "build:manifest": "node scripts/build-manifest.mjs",
     "prepack": "npm run build:manifest",
-    "test": "node --test",
-    "test:tarball": "node --test test/tarball.test.mjs"
+    "test": "node --test test/lifecycle.test.mjs test/safety.test.mjs test/hooks.test.mjs test/policy.test.mjs",
+    "test:tarball": "node --test test/tarball.test.mjs",
+    "sync:payload": "node scripts/sync-payload.mjs",
+    "test:release": "node scripts/test-release.mjs"
   },
   "keywords": [
     "codex",

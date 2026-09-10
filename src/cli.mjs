@@ -2,6 +2,8 @@ import { doctorBridgecode } from "./doctor.mjs";
 import { formatLifecycleSummary, installBridgecode } from "./install.mjs";
 import { PACKAGE_ROOT } from "./manifest.mjs";
 import { updateBridgecode } from "./update.mjs";
+import { recoverTransaction } from "./transaction.mjs";
+import { assertProjectDirectory } from "./manifest.mjs";
 
 const HELP = `Bridgecode CLI
 
@@ -9,6 +11,9 @@ Usage:
   bridgecode install [--project <path>] [--dry-run]
   bridgecode update [--project <path>] [--dry-run]
   bridgecode doctor [--project <path>]
+  bridgecode recover [--project <path>]
+  --hooks | --no-hooks   Configure project-local Codex heartbeat/recovery
+  --json                Return structured results
 
 Instruction registration:
   --instruction-files auto|agents|claude|both|none
@@ -30,6 +35,10 @@ export function parseArguments(argv) {
     const argument = rest[index];
     if (argument === "--dry-run") {
       options.dryRun = true;
+    } else if (argument === "--hooks" || argument === "--no-hooks") {
+      options.hooks = argument === "--hooks";
+    } else if (argument === "--json") {
+      options.json = true;
     } else if (argument === "--project") {
       options.project = rest[++index];
       if (!options.project) throw new Error("--project requires a path");
@@ -58,15 +67,20 @@ export async function run(argv) {
   }
   if (command === "install") {
     const summary = await installBridgecode(options);
-    return { code: 0, output: formatLifecycleSummary(summary) };
+    return { code: 0, output: options.json ? JSON.stringify(summary) : formatLifecycleSummary(summary) };
   }
   if (command === "update") {
     const summary = await updateBridgecode(options);
-    return { code: 0, output: formatLifecycleSummary(summary) };
+    return { code: 0, output: options.json ? JSON.stringify(summary) : formatLifecycleSummary(summary) };
   }
   if (command === "doctor") {
     const { report, output } = await doctorBridgecode(options);
-    return { code: report.ok ? 0 : 1, output };
+    return { code: report.ok ? 0 : 1, output: options.json ? JSON.stringify(report) : output };
+  }
+  if (command === "recover") {
+    if (options.dryRun) throw new Error("recover requires an explicit real recovery invocation");
+    const result = await recoverTransaction(await assertProjectDirectory(options.project));
+    return {code:0,output:options.json?JSON.stringify(result):result.recovered?"Recovery completed; run doctor with the previous installed version.":"No pending recovery."};
   }
   throw new Error(`Unknown command: ${command}\n\n${HELP}`);
 }

@@ -3,34 +3,21 @@ import { execFileSync } from "node:child_process";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
-import { fixture } from "./helpers.mjs";
-
-const tarball = process.env.BRIDGECODE_TARBALL;
-
-test(
-  "actual generated tarball installs, updates idempotently, and passes doctor",
-  { skip: !tarball },
-  async (t) => {
-    const tarballInfo = await stat(tarball);
-    assert.ok(tarballInfo.isFile());
-    const root = await fixture(t, "bridgecode-tarball-");
-    const npmCli = process.env.npm_execpath;
-    assert.ok(npmCli, "npm_execpath is required when tests run through npm");
-    const invoke = (...args) =>
-      execFileSync(
-        process.execPath,
-        [npmCli, "exec", "--yes", "--package", tarball, "--", "bridgecode", ...args, "--project", root],
-        { encoding: "utf8" },
-      );
-    const dryRun = invoke("install", "--dry-run");
-    assert.match(dryRun, /zero writes/);
-    const install = invoke("install");
-    assert.match(install, /Doctor passed/);
-    const before = await readFile(path.join(root, "AGENTS.md"));
-    const update = invoke("update");
-    assert.match(update, /idempotent/);
-    assert.deepEqual(await readFile(path.join(root, "AGENTS.md")), before);
-    const doctor = invoke("doctor");
-    assert.match(doctor, /Doctor passed/);
-  },
-);
+import { fixture, snapshot, MANAGED_PATHS } from "./helpers.mjs";
+test("exact packed artifact: allowlist, install, update, doctor and no writes on dry-run",async t=>{
+ const tarball=process.env.BRIDGECODE_TARBALL;
+ assert.ok(tarball,"Use npm run test:release; exact artifact is mandatory, never skipped");
+ assert.ok((await stat(tarball)).isFile());
+ const names=JSON.parse(process.env.BRIDGECODE_PACK_FILES||"[]");
+ for(const p of [...MANAGED_PATHS,"package.json","bin/bridgecode.mjs","hooks/bridgecode-turn.mjs","legacy/4.1.0.json"])assert.ok(names.includes(p),p);
+ assert.equal(names.some(p=>/^(test|scripts|agentic|\.github)\//.test(p)||/primitives|\.npmrc|package-lock/.test(p)),false);
+ const root=await fixture(t,"bridgecode-artifact-project-"),host=await fixture(t,"bridgecode-artifact-host-");
+ const npm=process.env.npm_execpath;assert.ok(npm);
+ execFileSync(process.execPath,[npm,"install","--prefix",host,"--ignore-scripts","--no-audit","--no-fund","--package-lock=false",tarball],{encoding:"utf8"});
+ const cli=path.join(host,"node_modules/@bridgecode/cli/bin/bridgecode.mjs");
+ const invoke=(...args)=>JSON.parse(execFileSync(process.execPath,[cli,...args,"--project",root,"--json"],{encoding:"utf8"}));
+ const before=await snapshot(root);assert.ok(invoke("install","--dry-run").changes.length);assert.deepEqual(await snapshot(root),before);
+ assert.equal(invoke("install").verified,true);
+ const installed=await snapshot(root);assert.equal(invoke("update").changes.length,0);assert.deepEqual(await snapshot(root),installed);
+ assert.equal(invoke("doctor").ok,true);
+});

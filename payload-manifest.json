@@ -1,14 +1,16 @@
 {
   "package": "@bridgecode/cli",
-  "version": "4.1.0",
-  "schemaVersion": 1,
+  "version": "4.3.0",
+  "schemaVersion": 2,
   "files": {
-    "AGENTS.md": "f20cd9165b25cd5879ac50f40a9e5d8a72c62f56d4c15ce91906c944ab7cd778",
-    "README_HUMAN.txt": "ba50784a9f1a396eb384f0d845b97082b2f98173585b12764adb4e3122d744ae",
-    "bridgecode/general-functions.md": "207d9f20cc3025bb8d6bd7b98fa1e8ff7fbb041f0741dbee3c42ce9c7c193ea0",
-    "bridgecode/specific-functions/frontend-design.md": "dff003580ada9490ba9fb36ddedfe3082b8e05cd910c3b0f295e891b016851fa",
-    "bridgecode/specific-functions/general-processflow.md": "22554f57664dbdcc36d6bbd1b647cc9729e73d2803304c5fe11837e78cdae8de",
-    "bridgecode/specific-functions/monoprompting.md": "588f2b3e5e72675c973befe004627ed7e9bd37e82818c5a3e3a44db65894bf00",
-    "bridgecode/specific-functions/specific-processflow.md": "fe7a9e556ce53f61e1c7e035cd83cf4bd50b04db7e16b782265a318ada84d7f1"
-  }
+    "AGENTS.md": "689482fe52bfe8308244fdc44229a904ed1a3d4ce2ab4207b59d3829ad88a287",
+    "README_HUMAN.txt": "297756d259596c26d6c60b61a1bc1ed7039f704e7908c1e0b0a7133ad0908f29",
+    "bridgecode/best-agent.md": "1b6aa0666d958693951c5600c357e87b0b362770a497d7fcad61ee6d55e8eafd",
+    "bridgecode/taste.md": "190c7802e0db34bfe431eea08013446559af8ddbcb30300ac46ce370068e71bf",
+    "bridgecode/design.md": "b2cfb581be5fadc964602c5b9dfb02b164e4ff42093c4011b2f28046394486b9",
+    "bridgecode/writing.md": "1b8c0ef066fce37d8cffdfe1653eb73d90cbc33d7a243c0dda145198a47b864d",
+    "bridgecode/copywriting.md": "3012f09c1d4fbd7056d90b0411086ec5338d54b122574c20c81fda817ac5c564",
+    "bridgecode/monoprompting.md": "936f5a872eb1c7ca2e60d054b03395796609db3bd0e9d9449e4cc59bed278fc2"
+  },
+  "hookHash": "dc3a715ed6d51013feeae974ef0ec242cb9a3f2b3d09e6439e7f9ec4692f462a"
 }

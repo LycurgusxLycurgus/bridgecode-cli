@@ -1,31 +1,8 @@
-import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const packageRoot = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const packageJson = JSON.parse(await readFile(path.join(packageRoot, "package.json"), "utf8"));
-const managedPaths = [
-  "AGENTS.md",
-  "README_HUMAN.txt",
-  "bridgecode/general-functions.md",
-  "bridgecode/specific-functions/frontend-design.md",
-  "bridgecode/specific-functions/general-processflow.md",
-  "bridgecode/specific-functions/monoprompting.md",
-  "bridgecode/specific-functions/specific-processflow.md",
-];
-const files = {};
-for (const relativePath of managedPaths) {
-  const bytes = await readFile(path.join(packageRoot, ...relativePath.split("/")));
-  files[relativePath] = createHash("sha256").update(bytes).digest("hex");
-}
-const manifest = {
-  package: packageJson.name,
-  version: packageJson.version,
-  schemaVersion: 1,
-  files,
-};
-await writeFile(
-  path.join(packageRoot, "payload-manifest.json"),
-  `${JSON.stringify(manifest, null, 2)}\n`,
-);
+import { PACKAGE_ROOT, PAYLOAD_PATHS, SCHEMA_VERSION, sha256 } from "../src/manifest.mjs";
+const pkg=JSON.parse(await readFile(path.join(PACKAGE_ROOT,"package.json"),"utf8"));
+const files={};
+for(const p of PAYLOAD_PATHS)files[p]=sha256(await readFile(path.join(PACKAGE_ROOT,p)));
+const manifest={package:pkg.name,version:pkg.version,schemaVersion:SCHEMA_VERSION,files,hookHash:sha256(await readFile(path.join(PACKAGE_ROOT,"hooks/bridgecode-turn.mjs")))};
+await writeFile(path.join(PACKAGE_ROOT,"payload-manifest.json"),JSON.stringify(manifest,null,2)+"\n");

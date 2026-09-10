@@ -1,63 +1,31 @@
-BRIDGECODE 4.1 — QUICK GUIDE
+BRIDGECODE 4.3 — QUICK GUIDE
 
-Bridgecode is a small repo-local instruction system for Codex. It chooses how much process a task needs, completes the work through the repo and available tools, validates real behavior, and keeps the repo’s architecture and learned prevention rules current.
+Tell your agent the outcome you want. Bridgecode chooses ROBUST for consequential uncertainty and LEAN (PATCH, DEBUG, ASSESS) for sufficiently understood work. Both research as needed, resolve user decisions, define completion, execute within scope, validate, and check memory.
 
-QUICK START
+Install or update with the exact commands in README.md. Open a fresh task afterward. Codex automatically receives applicable AGENTS.md; the optional project hooks provide a small turn reminder and restore the core after compaction. Trust the project and review /hooks. Other harnesses use their supported instruction files. You should not have to mention AGENTS.md every turn.
 
-Copy these items into the root of a project:
+THE PROCESS
 
-- AGENTS.md
-- bridgecode/
-- README_HUMAN.txt if you want this guide nearby
+The agent inspects evidence, selects a useful perspective (Person, Core, representative work) or a small complementary amalgam, and anticipates supported mistakes. When your choice is needed, it presents one or two high-level perspective-based questions through native question cards if available. ROBUST pauses for decisions or checkpoints you requested; it continues when the contract is settled.
 
-Start a task with:
+agentic/analysis.md holds the current decision brief, checklist, evidence, review state, and next action. Each item says what must work and what proves it. The implementation uses the smallest mechanism that meets those criteria. One final regression block exercises real backend or frontend behavior. A fresh native reviewer with the same model and reasoning effort returns PASS, FIX, or REPLAN. The root repairs findings; the second REPLAN stops automatic retries and identifies what is missing. Missing review capability or tests remain explicitly unverified.
 
-"Use @AGENTS.md and Bridgecode 4.1 for this task: [your request]."
+DESIGN AND WRITING
 
-AGENTS.md loads the shared corrections, selects a processflow, and tells Codex which other file to read. You do not need to choose the route yourself.
+Codex directly designs and implements frontends. A full design direction uses Taste, three generated references (style, system, representative view), actual product behavior, browser/computer validation, and agentic/design/DESIGN.md grounded in the working result. Small maintenance reuses that system. User-supplied direction controls fixed choices.
 
-THE TWO PROCESSFLOWS
+Writing follows the actual subject, audience, and purpose. Marketing uses credible customer benefits and useful next actions. Product interfaces explain user work rather than irrelevant development internals.
 
-ROBUST runs full research, pauses for user Q&A, creates one production checklist, executes it, performs a production review with one real regression block, and condenses current architecture and prevention memory. It is intended for uncertainty, important user choices, architecture or design work, multiple boundaries, or meaningful production risk.
+MEMORY
 
-LEAN adapts the same stages. It declares research, Q&A, planning, and review as rapid or skipped before acting, then uses one of three profiles: PATCH for scoped changes, DEBUG for broken behavior, and ASSESS for read-only review or explanation. It escalates to ROBUST when the task stops being locally understood or safely bounded.
+agentic/architecture.md maps maintained files, ownership, data flow, constraints, and validation. When an error reveals a causal defect, the agent fixes the code; architectural changes are appropriate when the cause is structural. After verification the map points to the responsible implementation and regression protection. Memory does not require a refactor when a local correction solves the failure.
 
-For every nontrivial task, Codex shows why the selected flow fits and gives a short reason for research, Q&A, planning, execution, review, and condensation. It does not append a separate catch-all reason after those specific explanations.
+Old repo rules remain temporarily in AGENTS.md during migration. This is urgent follow-up: document already-implemented rules in architecture.md and remove them individually; implement unresolved corrections within authorized scope, verify and document them, then remove those rules. The installer never guesses their meaning or deletes unresolved lessons.
 
-FRONTEND WORK
-
-Codex preserves product and backend truth. New visual languages and serious redesigns go through an external design model. Codex prepares one self-contained handoff and three required visual references, integrates the returned complete frontend, verifies the real app through browser or computer use, and records the verified design system in agentic/design/DESIGN.md. When you provide a design, it controls the direction. When you do not, Bridgecode evaluates four different design stances and selects the strongest product fit.
-
-PROJECT MEMORY
-
-Bridgecode uses a few canonical artifacts instead of leaving task files behind:
-
-- agentic/analysis.md contains only current active research, decisions, checklist, execution state, and remaining work. It is replaced or condensed as work changes.
-- agentic/design/ contains current design contracts, handoffs, references, assets, and verified design memory.
-- agentic/testscripts/ contains only reusable real-regression instructions.
-
-Temporary simulations, probes, fixtures, screenshots, and duplicate plans are removed after their useful evidence is incorporated.
-
-AGENTS.md is also evolving memory. The first populated repo rule is always a compact description of the current architecture. Later rules prevent repo-specific errors from recurring. Architecture changes and related lessons are merged into existing rules; the section never becomes an incident history.
-
-VALIDATION
-
-Bridgecode accepts completed implementation through one real regression block. A block can contain a small coordinated set of commands and interactions, but it exercises the actual affected production path. Backend work uses real functions, contracts, adapters, or flows. Frontend work uses the running interface. Failures are repaired and the same complete block is rerun.
+Handoffs identify architecture.md, active work, exact relevant files, evidence limits, and the next step. Disposable probes and simulations are cleaned. Useful tests and recovery evidence remain while needed. Installed Bridgecode instructions and harness rules are package-owned; project memory is preserved during updates.
 
 FILES
 
-AGENTS.md is the always-on context, router, LLM-Friendly Engineering constitution, and correction memory.
+AGENTS.md contains the permanent core, both routes, shared stages, mini-skills, reviewer contract, memory, specialist index, and harness rules. bridgecode/ contains best-agent.md, taste.md, design.md, writing.md, copywriting.md, and monoprompting.md, loaded only when triggered.
 
-bridgecode/general-functions.md contains shared system-prompt corrections for autonomous judgment, writing, validation, artifacts, frontend authorship, prompts, and memory placement.
-
-bridgecode/specific-functions/general-processflow.md defines ROBUST.
-
-bridgecode/specific-functions/specific-processflow.md defines LEAN and its PATCH, DEBUG, and ASSESS profiles.
-
-bridgecode/specific-functions/frontend-design.md defines the external frontend process.
-
-bridgecode/specific-functions/monoprompting.md defines reusable prompt and instruction creation.
-
-GOLDEN RULE
-
-State the outcome you want, tag @AGENTS.md once, and let Bridgecode choose the process depth. ROBUST protects work from missing definition; LEAN protects simple work from unnecessary ceremony. Both finish by validating the real result and checking whether the repo’s current memory should change.
+A passing CLI doctor establishes installed bytes and registration. It does not certify live hook execution, model compliance, or successful application behavior.
