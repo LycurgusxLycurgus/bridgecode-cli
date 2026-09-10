@@ -25,4 +25,4 @@ jobs:
       - run: npm test
       - run: npm run test:release -- --output release
       - name: Publish the tested artifact
-        run: npm publish "release/bridgecode-cli-$(node -p 'require("./package.json").version').tgz" --access public --provenance
+        run: npm publish "./release/bridgecode-cli-$(node -p 'require("./package.json").version').tgz" --access public --provenance

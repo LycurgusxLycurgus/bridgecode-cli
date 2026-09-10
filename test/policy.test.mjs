@@ -25,6 +25,6 @@ test("publish workflow resolves the exact artifact version without publishing",a
  const pkg=JSON.parse(await readFile(path.join(PACKAGE_ROOT,"package.json"),"utf8"));
  assert.equal(actual,pkg.version);
  assert.ok(workflow.includes("npm run test:release -- --output release"));
- assert.ok(workflow.includes('release/bridgecode-cli-'));
+ assert.ok(workflow.includes('npm publish "./release/bridgecode-cli-'));
  assert.ok(workflow.includes("GITHUB_REF_NAME"));
 });
