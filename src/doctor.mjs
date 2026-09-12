@@ -1,6 +1,7 @@
 import { assertProjectDirectory, loadPackageContext, readOptional, METADATA_PATH } from "./manifest.mjs";
 import { verifyInstalled, instructionBudget } from "./verification.mjs";
 import { JOURNAL } from "./transaction.mjs";
+import { ARCHITECTURE_PATH, IMPORT_NOTICE } from "./repo-rules.mjs";
 
 export async function inspectInstallation({projectRoot,project,packageRoot,packageContext}={}) {
   const root=await assertProjectDirectory(projectRoot??project??".");
@@ -16,10 +17,15 @@ export async function inspectInstallation({projectRoot,project,packageRoot,packa
   }catch(e){checks.push({name:"installation integrity",ok:false,detail:e.message});}
   try{
     const n=await instructionBudget(p=>readOptional(root,p));
-    checks.push({name:"root AGENTS.md byte budget only",ok:true,detail:`${n}/32768 bytes; global, ancestor and nested instructions not measured`});
+    checks.push({name:"root AGENTS.md size (informational)",ok:true,detail:`${n} bytes; no Bridgecode size gate; host instruction discovery is not certified`});
+    if(n>32768)warnings.push("Large AGENTS.md: check the host's actual instruction-loading configuration; size does not block installation. Preserve unrelated instructions.");
     if(await readOptional(root,"AGENTS.override.md"))warnings.push("AGENTS.override.md can shadow root AGENTS.md; inspect active host guidance.");
-  }catch(e){checks.push({name:"root AGENTS.md byte budget only",ok:false,detail:e.message});}
-  if(installed?.migrationPending)warnings.push("URGENT: memory migration incomplete. Reconcile legacy rules into verified implementation and agentic/architecture.md, then remove each resolved rule.");
+    if((await readOptional(root,ARCHITECTURE_PATH))?.toString("utf8").includes(IMPORT_NOTICE)){
+      if(installed)installed.migrationPending=true;
+      warnings.push("URGENT: imported architecture constraints remain binding and unverified. Reconcile with code/tests within authorized scope.");
+    }
+  }catch(e){checks.push({name:"repository instruction/memory access",ok:false,detail:e.message});}
+  if(installed?.parsed.rules)warnings.push("Legacy AGENTS rules detected; update to transfer them into agentic/architecture.md.");
   if(metadata?.hooksEnabled)warnings.push("Hook registration verified; host trust, activation and model compliance are not certified.");
   return {ok:checks.every(c=>c.ok),projectRoot:root,version:metadata?.version,checks,warnings,migrationPending:installed?.migrationPending??false};
 }

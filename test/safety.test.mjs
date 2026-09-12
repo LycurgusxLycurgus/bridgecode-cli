@@ -45,11 +45,27 @@ test("symlink or junction escape is refused",async t=>{
  await assert.rejects(installBridgecode(options(root)),/symbolic|symlink|link/i);
  assert.deepEqual(await snapshot(outside),before);
 });
-test("oversized dry-run and traversal have zero writes",async t=>{
+test("large AGENTS dry-run succeeds without writes; traversal still fails",async t=>{
  const root=await fixture(t);await writeFile(path.join(root,"AGENTS.md"),"x".repeat(33000));const before=await snapshot(root);
- await assert.rejects(installBridgecode({...options(root),dryRun:true}),/budget/);
+ assert.equal((await installBridgecode({...options(root),dryRun:true})).dryRun,true);
  await assert.rejects(installBridgecode({...options(root),instructionFile:["../CLAUDE.md"]}),/Unsafe/);
  assert.deepEqual(await snapshot(root),before);
+ await installBridgecode(options(root));
+ assert.equal((await inspectInstallation(options(root))).ok,true);
+ assert.equal((await updateBridgecode(options(root))).changes.length,0);
+ assert.ok((await readFile(path.join(root,"AGENTS.md"),"utf8")).endsWith("x".repeat(33000)));
+});
+test("malformed external repo markers fail fresh installation without writes",async t=>{
+ const root=await fixture(t);await writeFile(path.join(root,"AGENTS.md"),"# Local\n<!-- bridgecode:repo-rules:start -->\n- Keep this\n");
+ const before=await snapshot(root);await assert.rejects(installBridgecode(options(root)),/markers/);assert.deepEqual(await snapshot(root),before);
+});
+test("linked architecture destination is refused without moving rules",async t=>{
+ const root=await fixture(t),outside=await fixture(t);
+ await writeFile(path.join(root,"AGENTS.md"),"## Repo rules\n- Keep safe\n");
+ await symlink(outside,path.join(root,"agentic"),process.platform==="win32"?"junction":"dir");
+ const before=await snapshot(root),external=await snapshot(outside);
+ await assert.rejects(installBridgecode(options(root)),/symbolic|symlink|link/i);
+ assert.deepEqual(await snapshot(root),before);assert.deepEqual(await snapshot(outside),external);
 });
 test("post-check failure rolls back; failed rollback keeps recoverable journal",async t=>{
  const root=await fixture(t);await writeFile(path.join(root,"owned"),"before");

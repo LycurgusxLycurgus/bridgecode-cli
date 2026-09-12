@@ -1,4 +1,4 @@
-BRIDGECODE 4.3 — QUICK GUIDE
+BRIDGECODE 4.3.1 — QUICK GUIDE
 
 Tell your agent the outcome you want. Bridgecode chooses ROBUST for consequential uncertainty and LEAN (PATCH, DEBUG, ASSESS) for sufficiently understood work. Both research as needed, resolve user decisions, define completion, execute within scope, validate, and check memory.
 
@@ -6,7 +6,7 @@ Install or update with the exact commands in README.md. Open a fresh task afterw
 
 THE PROCESS
 
-The agent inspects evidence, selects a useful perspective (Person, Core, representative work) or a small complementary amalgam, and anticipates supported mistakes. When your choice is needed, it presents one or two high-level perspective-based questions through native question cards if available. ROBUST pauses for decisions or checkpoints you requested; it continues when the contract is settled.
+Every turn starts with an explicit route, each stage's action and reason, and a pointer to agentic/analysis.md. Its first content block develops intent, a useful perspective (Person, Core, representative work) or small complementary amalgam, and supported anticipatory corrections. Research then tests provisional choices before questions, final planning, and execution. Read-only/no-file-write requests use a compatible visible brief; exact-output constraints remain intact. When your choice is needed, it presents one or two high-level perspective-based questions through native question cards if available. ROBUST pauses for decisions or checkpoints you requested; it continues when the contract is settled.
 
 agentic/analysis.md holds the current decision brief, checklist, evidence, review state, and next action. Each item says what must work and what proves it. The implementation uses the smallest mechanism that meets those criteria. One final regression block exercises real backend or frontend behavior. A fresh native reviewer with the same model and reasoning effort returns PASS, FIX, or REPLAN. The root repairs findings; the second REPLAN stops automatic retries and identifies what is missing. Missing review capability or tests remain explicitly unverified.
 
@@ -20,9 +20,9 @@ MEMORY
 
 agentic/architecture.md maps maintained files, ownership, data flow, constraints, and validation. When an error reveals a causal defect, the agent fixes the code; architectural changes are appropriate when the cause is structural. After verification the map points to the responsible implementation and regression protection. Memory does not require a refactor when a local correction solves the failure.
 
-Old repo rules remain temporarily in AGENTS.md during migration. This is urgent follow-up: document already-implemented rules in architecture.md and remove them individually; implement unresolved corrections within authorized scope, verify and document them, then remove those rules. The installer never guesses their meaning or deletes unresolved lessons.
+Updates move all recognized repo rules into architecture.md, preserving their content as binding, initially unverified constraints. Urgently reconcile them with code/tests; merge verified constraints beside their responsible files and keep unresolved requirements there. Implement corrections only within authorized scope. Existing architecture is preserved; unrelated AGENTS.md blocks remain after Bridgecode. Size alone never blocks installation.
 
-Handoffs identify architecture.md, active work, exact relevant files, evidence limits, and the next step. Disposable probes and simulations are cleaned. Useful tests and recovery evidence remain while needed. Installed Bridgecode instructions and harness rules are package-owned; project memory is preserved during updates.
+Same-task follow-ups update analysis.md in place. Paused work remains recoverable. Completion checks condensation and removes the finished task's section, deleting the board when no active work remains; completed-task histories do not accumulate. Handoffs identify architecture.md, any remaining active work, exact relevant files, evidence limits, and the next step. Disposable probes and simulations are cleaned. Useful tests and recovery evidence remain while needed. Installed Bridgecode instructions and harness rules are package-owned; project memory is preserved during updates.
 
 FILES
 

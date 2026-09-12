@@ -82,7 +82,8 @@ export async function readPayloadFile(context,p) {
   if (!Object.hasOwn(context.manifest.files,p)) throw new Error(`Unmanaged payload: ${p}`);
   return readFile(await safeTarget(context.packageRoot,p));
 }
-export async function legacyContext(packageRoot = PACKAGE_ROOT) {
-  const old = JSON.parse(await readFile(path.join(packageRoot,"legacy/4.1.0.json"),"utf8"));
+export async function legacyContext(packageRoot = PACKAGE_ROOT, version = "4.1.0") {
+  if(!/^\d+\.\d+\.\d+$/.test(version))throw new Error("Invalid legacy version");
+  const old = JSON.parse(await readFile(path.join(packageRoot,"legacy",version+".json"),"utf8"));
   return { ...old, hashes: Object.fromEntries(Object.entries(old.files).map(([p,s]) => [p,sha256(Buffer.from(s))])) };
 }

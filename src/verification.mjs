@@ -56,6 +56,5 @@ export async function verifyInstalled(context,metadata,read) {
 export async function instructionBudget(read) {
   // This measures the project root file only; host/global/ancestor layers are not certified.
   const bytes=await read('AGENTS.md');
-  if((bytes?.length??0)>32768)throw new Error('Root AGENTS.md exceeds the conservative 32768-byte budget; condense unrelated instructions or reconcile legacy rules first');
   return bytes?.length??0;
 }

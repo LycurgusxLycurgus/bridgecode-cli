@@ -16,12 +16,12 @@ export async function snapshot(root){
   if(e.isDirectory())await walk(p);else if(e.isSymbolicLink())result[r]="symlink";else result[r]=sha256(await readFile(p));
  }}await walk(root);return result;
 }
-export async function writeManifest(root,name="@bridgecode/cli",version="4.3.1"){
+export async function writeManifest(root,name="@bridgecode/cli",version="4.3.2"){
  const files={};for(const p of MANAGED_PATHS)files[p]=sha256(await readFile(path.join(root,p)));
  const hookHash=sha256(await readFile(path.join(root,"hooks/bridgecode-turn.mjs")));
  await writeFile(path.join(root,"payload-manifest.json"),JSON.stringify({package:name,version,schemaVersion:2,files,hookHash},null,2)+"\n");
 }
-export async function simulatedPackage(t,version="4.3.1"){
+export async function simulatedPackage(t,version="4.3.2"){
  const root=await fixture(t,"bridgecode-package-");
  for(const p of [...MANAGED_PATHS,"hooks","legacy"]){await mkdir(path.dirname(path.join(root,p)),{recursive:true});await cp(path.join(PACKAGE_ROOT,p),path.join(root,p),{recursive:true});}
  const pkg=JSON.parse(await readFile(path.join(PACKAGE_ROOT,"package.json"),"utf8"));
@@ -33,3 +33,13 @@ export async function simulatedPackage(t,version="4.3.1"){
  await writeManifest(root,pkg.name,version);return root;
 }
 export async function legacyFiles(){return JSON.parse(await readFile(path.join(PACKAGE_ROOT,"legacy/4.1.0.json"),"utf8")).files;}
+export async function package430(t){
+ const root=await fixture(t,"bridgecode-430-");
+ const old=JSON.parse(await readFile(path.join(PACKAGE_ROOT,"legacy/4.3.0.json"),"utf8"));
+ if(sha256(old.hook)!==old.hookHash)throw new Error("4.3.0 hook snapshot mismatch");
+ for(const [p,s]of Object.entries({...old.files,"hooks/bridgecode-turn.mjs":old.hook})){
+   await mkdir(path.dirname(path.join(root,p)),{recursive:true});await writeFile(path.join(root,p),s);
+ }
+ await writeFile(path.join(root,"package.json"),JSON.stringify({name:"@bridgecode/cli",version:"4.3.0"}));
+ await writeManifest(root,"@bridgecode/cli","4.3.0");return root;
+}

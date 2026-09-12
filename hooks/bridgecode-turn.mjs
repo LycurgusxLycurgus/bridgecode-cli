@@ -29,7 +29,7 @@ async function main() {
   if(starts.length!==1||text.split(end).length!==2)throw new Error('ambiguous core');
   const block=text.slice(starts[0].index,text.indexOf(end)+end.length);
   if(hash(block)!==state.agents?.managedHash||starts[0][1]!==state.version)throw new Error('core integrity mismatch');
-  const reminder=`BRIDGECODE ${state.version} ACTIVE. Apply the project core to this turn. Recover AGENTS.md if missing or stale; load required specialists before their governed actions. Preserve the active contract, native question decisions, real acceptance, same-model review, and second-REPLAN stop. Read relevant agentic/analysis.md and agentic/architecture.md when resuming work. Respect the user's current scope.`;
+  const reminder=`BRIDGECODE ${state.version} ACTIVE. Follow AGENTS.md's every-turn entry gate: first declare BRIDGECODE_ROUTE, each stage and why, then point to agentic/analysis.md. Before task-directed work, refresh its first-block Best-Agent brief: intent, perspective/amalgam, supported corrections. Load necessary instructions/memory first; refine provisional choices after research and ask only unresolved questions. Revalidate all three moves every turn; update the same task in place. Preserve paused/concurrent work; condense and remove completed task state. Read applicable architecture constraints, including unverified imports. Respect read-only/exact-output exceptions. Recover stale core and required specialists; retain real acceptance, native review, and second-REPLAN stop.`;
   if(name==='UserPromptSubmit')emit(name,reminder);
   else {
     if(Buffer.byteLength(block)>24000)throw new Error('core exceeds recovery bound; read AGENTS.md directly');

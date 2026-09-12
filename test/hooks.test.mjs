@@ -10,6 +10,7 @@ test("installed hook emits bounded heartbeat, compact recovery, and explicit fal
  const run=e=>{const r=spawnSync(process.execPath,[path.join(root,".codex/hooks/bridgecode-turn.mjs")],{input:JSON.stringify({cwd:root,...e}),encoding:"utf8",cwd:root});assert.equal(r.status,0);return r.stdout?JSON.parse(r.stdout):null;};
  const heart=run({hook_event_name:"UserPromptSubmit"}).hookSpecificOutput;
  assert.equal(heart.hookEventName,"UserPromptSubmit");assert.ok(heart.additionalContext.length<1000);
+ for(const text of ["first declare BRIDGECODE_ROUTE","first-block Best-Agent brief","intent, perspective/amalgam, supported corrections","every turn","remove completed task state","read-only/exact-output"])assert.ok(heart.additionalContext.includes(text),text);
  const compact=run({hook_event_name:"SessionStart",source:"compact"}).hookSpecificOutput;
  assert.match(compact.additionalContext,/Operating contract/);assert.match(compact.additionalContext,/REPLAN/);
  assert.equal(run({hook_event_name:"SessionStart",source:"startup"}),null);

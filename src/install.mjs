@@ -1,7 +1,7 @@
 import path from "node:path";
 import { readFile } from "node:fs/promises";
 import { assertProjectDirectory, loadPackageContext, readOptional, METADATA_PATH, HOOK_PATH, sha256, legacyContext, validateRelativePath } from "./manifest.mjs";
-import { parseManagedAgents, buildManagedAgents, adoptUnmarkedAgents, adoptLegacy, pendingRulesBlock, parseRules, isRulesPopulated } from "./repo-rules.mjs";
+import { parseManagedAgents, buildManagedAgents, adoptUnmarkedAgents, adoptKnownUnmarked, adoptLegacy, migrateRules, ARCHITECTURE_PATH, IMPORT_NOTICE } from "./repo-rules.mjs";
 import { assertInstructionMode, selectInstructionPaths, upsertBootstrap, removeBootstrap, parseBootstrap } from "./instructions.mjs";
 import { HOOK_CONFIG, mergeHooks } from "./hooks.mjs";
 import { verifyInstalled, instructionBudget } from "./verification.mjs";
@@ -18,33 +18,35 @@ export async function prepareLifecycle({command,project=".",packageRoot,dryRun=f
   if(metadata?.schemaVersion===2 && metadata.projectRoot!==root)throw new Error("Installation belongs to a different path; relocate with a supported migration");
   const agentsBytes=await read("AGENTS.md"),text=agentsBytes?.toString("utf8")??"";
   const canonical=(await readFile(path.join(context.packageRoot,"AGENTS.md"))).toString("utf8"),version=context.packageJson.version;
-  let parsed=parseManagedAgents(text),rules="",mode="",adoptedLegacy=false,oldHashes={};
+  let parsed=parseManagedAgents(text),rules="",mode="",adoptedLegacy=false,legacyOutside="",oldHashes={};
   if(metadata){await verifyInstalled(context,metadata,read);mode="replace managed core";}
   else if(parsed)throw new Error("Marked installation has no trustworthy metadata; recover installation metadata first");
   else if(adoptUnmarkedAgents(text,canonical)){mode="adopt current source";}
+  else if(/^# Bridgecode 4\.3\s*$/m.test(text)){
+    const old=await legacyContext(context.packageRoot,"4.3.0");
+    parsed=adoptKnownUnmarked(text,old.files["AGENTS.md"]);oldHashes=old.hashes;mode="adopt legacy 4.3";
+  }
   else if(text.includes("Bridgecode 4.1 Processflow Router")||text.includes("## 5) Specific Repo Rules")){
     const old=await legacyContext(context.packageRoot);
-    rules=adoptLegacy(text,old.files["AGENTS.md"]).rules;oldHashes=old.hashes;adoptedLegacy=true;mode="adopt legacy 4.1";
+    const adopted=adoptLegacy(text,old.files["AGENTS.md"]);
+    rules=adopted.rules;legacyOutside=adopted.outside;oldHashes=old.hashes;adoptedLegacy=true;mode="adopt legacy 4.1";
   }else{
     if(command==="update")throw new Error("Bridgecode is not installed; run install");
     if(/Bridgecode\s+\d/i.test(text))throw new Error("Unrecognized Bridgecode source; export and reconcile it before installation");
-    mode=text?"append managed core":"create AGENTS.md";
+    mode=text?"place managed core before repository instructions":"create AGENTS.md";
   }
-  let nextText;
   const block=buildManagedAgents(canonical,version);
-  if(parsed){
-    rules=parsed.rules;
-    nextText=text.slice(0,parsed.start)+block+text.slice(parsed.end);
-    if(parsed.schema===1)nextText+=pendingRulesBlock(rules);
-  }else if(adoptedLegacy)nextText=block+pendingRulesBlock(rules)+"\n";
-  else if(mode==="adopt current source")nextText=block+"\n";
-  else nextText=text+(text?(text.endsWith("\n")?"\n":"\n\n"):"")+block+"\n";
+  if(parsed)rules=parsed.rules;
+  const architecture=(await read(ARCHITECTURE_PATH))?.toString("utf8");
+  const migrated=migrateRules(adoptedLegacy?legacyOutside:mode==="adopt current source"?"":text,parsed,rules,block,architecture);
+  const nextText=migrated.agents;
   const changes=new Map();
   async function set(p,bytes){
     const current=await read(p);
     if((current?sha256(current):null)!==(bytes?sha256(bytes):null))changes.set(p,bytes);
   }
   await set("AGENTS.md",Buffer.from(nextText));
+  if(migrated.architecture!==architecture)await set(ARCHITECTURE_PATH,Buffer.from(migrated.architecture));
   const previousManaged=metadata?.managedFiles??Object.fromEntries(Object.entries(oldHashes).filter(([p])=>p!=="AGENTS.md"));
   const desired={};
   for(const [p,h]of Object.entries(context.manifest.files)){
@@ -91,7 +93,7 @@ export async function prepareLifecycle({command,project=".",packageRoot,dryRun=f
   const projected=async p=>changes.has(p)?changes.get(p):read(p);
   await instructionBudget(projected);
   await verifyInstalled(context,next,projected);
-  const summary={command,projectRoot:root,version,dryRun,agentsMode:mode,changes:[...changes].map(([p,b])=>({path:p,action:b===null?"remove verified managed file":"write"})),migrationPending:isRulesPopulated(parseRules(nextText)?.rules??""),hooksEnabled,verified:false};
+  const summary={command,projectRoot:root,version,dryRun,agentsMode:mode,changes:[...changes].map(([p,b])=>({path:p,action:b===null?"remove verified managed file":"write"})),migrationPending:migrated.architecture?.includes(IMPORT_NOTICE)??false,hooksEnabled,verified:false};
   if(!dryRun){
     const check=async()=>{await instructionBudget(p=>readOptional(root,p));await verifyInstalled(context,next,p=>readOptional(root,p));};
     if(changes.size)await applyTransaction(root,[...changes].map(([p,content])=>({path:p,content})),{preconditions,postCheck:check,failAfterWrites:transactionFailAfterWrites});
@@ -107,7 +109,7 @@ export function formatLifecycleSummary(s){
     `AGENTS.md: ${s.agentsMode}`,
     ...(s.changes.length?s.changes.map(c=>c.action+": "+c.path):["No changes required; installation is idempotent."]),
     s.dryRun?"Projected verification passed; zero writes.":"Doctor passed for the installed payload and registration.",
-    s.migrationPending?"URGENT: legacy repo rules remain in AGENTS.md. Implement unresolved causal corrections within scope; map verified code/tests/constraints into agentic/architecture.md and remove each reconciled rule. Memory migration is INCOMPLETE.":"No legacy rules remain pending.",
+    s.migrationPending?"Repo rules are preserved in agentic/architecture.md. URGENT: imported constraints remain binding and unverified until reconciled with code/tests; implement corrections only within authorized scope.":"No imported rules are flagged for verification.",
     s.hooksEnabled?"Codex hooks configured, not runtime-certified. Trust this project and review /hooks.":"Hooks disabled; follow AGENTS.md directly.",
     "Start a fresh task/session after installing or updating."
   ].join("\n");

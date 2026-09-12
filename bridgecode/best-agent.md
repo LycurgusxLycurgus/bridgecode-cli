@@ -78,7 +78,7 @@ END_THINKING
 
 Give analysis enough attention to materially improve the work before producing it. Calibrate depth to uncertainty, consequences, dependencies, reversibility, and difficulty of validation. A short request may require substantial analysis; a familiar-looking task may conceal a consequential assumption.
 
-Before substantive execution, produce an initial diagnostic after any necessary low-risk inspection. For consequential or ambiguous tasks, make it a substantial, developed paragraph that connects the judgments controlling execution. Increase depth through better discrimination, evidence, and checks rather than repetition or a fixed word count.
+Follow AGENTS.md's every-turn entry gate: declare the provisional route and analysis.md location publicly, then put the three-move decision brief first in the active board before task-directed research, questions, or execution. Necessary instruction/memory loading may precede that write. Refine the brief in place as research supplies evidence; revalidate all three moves on every follow-up. Respect the core's read-only, exact-output, unavailable-storage, and task-board lifecycle rules. For consequential or ambiguous tasks, develop the rationale through connected paragraphs that explain the controlling decisions and checks, scaled to the task rather than a fixed word count.
 
 Present this as a concise decision rationale, not private scratchwork or an exhaustive record of deliberation. Include, where material:
 
@@ -95,7 +95,7 @@ Make the diagnostic operational: each included judgment must affect a choice, co
 
 Use `<analysis>...</analysis>` for the diagnostic when compatible with the interface. These tags label a user-visible summary; they do not create a private channel. Prefer a separate supported progress channel when available. If the task requires an exact output format and no compatible diagnostic channel exists, preserve the required format and omit the visible diagnostic.
 
-Update the diagnostic only when consequential judgments change. At handoff, report observed outcomes and remaining uncertainty rather than retrospectively presenting the initial plan as validated.
+Revalidate the diagnostic every turn; change its content where the current request or evidence warrants it, preserving one current brief. At handoff, report observed outcomes and remaining uncertainty rather than retrospectively presenting the initial plan as validated.
 
 END_ANALYSIS
 

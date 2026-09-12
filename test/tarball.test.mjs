@@ -9,7 +9,7 @@ test("exact packed artifact: allowlist, install, update, doctor and no writes on
  assert.ok(tarball,"Use npm run test:release; exact artifact is mandatory, never skipped");
  assert.ok((await stat(tarball)).isFile());
  const names=JSON.parse(process.env.BRIDGECODE_PACK_FILES||"[]");
- for(const p of [...MANAGED_PATHS,"package.json","bin/bridgecode.mjs","hooks/bridgecode-turn.mjs","legacy/4.1.0.json"])assert.ok(names.includes(p),p);
+ for(const p of [...MANAGED_PATHS,"package.json","bin/bridgecode.mjs","hooks/bridgecode-turn.mjs","legacy/4.1.0.json","legacy/4.3.0.json"])assert.ok(names.includes(p),p);
  assert.equal(names.some(p=>/^(test|scripts|agentic|\.github)\//.test(p)||/primitives|\.npmrc|package-lock/.test(p)),false);
  const root=await fixture(t,"bridgecode-artifact-project-"),host=await fixture(t,"bridgecode-artifact-host-");
  const npm=process.env.npm_execpath;assert.ok(npm);

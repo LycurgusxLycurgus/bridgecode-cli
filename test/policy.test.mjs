@@ -28,3 +28,13 @@ test("publish workflow resolves the exact artifact version without publishing",a
  assert.ok(workflow.includes('npm publish "./release/bridgecode-cli-'));
  assert.ok(workflow.includes("GITHUB_REF_NAME"));
 });
+test("entry and task-board lifecycle have explicit policy gates (static, not model execution)",async()=>{
+ const core=await readFile(path.join(PACKAGE_ROOT,"AGENTS.md"),"utf8");
+ for(const anchor of ["Start the first public response with","BRIDGECODE_ROUTE: ROBUST","BRIDGECODE_ROUTE: LEAN / PATCH|DEBUG|ASSESS","Before task-directed research, questions, implementation, or deliverables","its first content block applies all three Best-Agent moves","Revalidate all three moves on follow-ups","Read-only/no-file-write requests","Disclose unavailable storage","delete analysis.md when no active work remains","Do not append turn logs","retain unresolved requirements there"])
+ assert.ok(core.includes(anchor),anchor);
+ assert.ok(core.indexOf("**Every-turn entry gate.**")<core.indexOf("**Research.**"));
+ assert.doesNotMatch(core,/Before major action|full stage accounting when requested|Legacy rules temporarily retained/);
+ const specialist=await readFile(path.join(PACKAGE_ROOT,"bridgecode/best-agent.md"),"utf8");
+ assert.ok(specialist.includes("Follow AGENTS.md's every-turn entry gate"));
+ assert.ok(specialist.includes("Revalidate the diagnostic every turn"));
+});

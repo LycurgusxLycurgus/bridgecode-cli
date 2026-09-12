@@ -27,6 +27,53 @@ export function pendingRulesBlock(rules) {
   if (!isRulesPopulated(rules)) return "";
   return `\n\n## Urgent Bridgecode memory migration\n\nRepository-owned legacy rules below remain binding until reconciled. Urgently verify each rule: if implemented, record its code/test/constraint in agentic/architecture.md and remove that rule; otherwise implement the causal correction within authorized scope, verify, document, then remove. The upgrade is installed, but memory migration is incomplete while any rule remains.\n\n${REPO_RULES_START}\n${rules}\n${REPO_RULES_END}`;
 }
+export const ARCHITECTURE_PATH = "agentic/architecture.md";
+export const IMPORT_NOTICE = "Imported repository constraints — verification pending";
+function markdownHeadings(text) {
+  const headings=[];let fence=null,offset=0;
+  for(const line of text.match(/[^\n]*\n|[^\n]+$/g)??[]){
+    const code=/^ {0,3}(`{3,}|~{3,})/.exec(line);
+    if(code){if(!fence)fence=code[1];else if(code[1][0]===fence[0]&&code[1].length>=fence.length)fence=null;}
+    if(!fence&&!code){
+      const h=/^ {0,3}(#{1,6})[ \t]+(.+?)\s*$/.exec(line);
+      if(h)headings.push({start:offset,level:h[1].length,rules:/^(?:\d+[.)]\s*)?(?:specific\s+)?repo(?:sitory)?[ -]rules\s*#*$/i.test(h[2])});
+    }
+    offset+=line.length;
+  }
+  return headings;
+}
+function extractNamedRules(text) {
+  const headings=markdownHeadings(text),spans=[];let end=0;
+  for(let i=0;i<headings.length;i++){
+    const h=headings[i];if(!h.rules||h.start<end)continue;
+    end=headings.slice(i+1).find(n=>n.level<=h.level)?.start??text.length;
+    spans.push({start:h.start,end});
+  }
+  const rules=spans.map(s=>text.slice(s.start,s.end)).join("\n");
+  for(const s of spans.reverse())text=text.slice(0,s.start)+text.slice(s.end);
+  return {text,rules};
+}
+export function migrateRules(text, parsed, rules, block, architecture) {
+  // Preserve repository bytes. Only the recognized core/rule wrappers are removed.
+  let outside = parsed ? text.slice(0,parsed.start)+text.slice(parsed.end) : text;
+  const marked=parseRules(outside);
+  if(marked){
+    // Schema 2 already exposes this external body through parsed.rules.
+    // Unmarked 4.1 may also have a separate legacy body; preserve both.
+    if(parsed?.schema!==2&&isRulesPopulated(rules))rules+="\n\n"+marked.rules;
+    else rules=marked.rules;
+    const oldNotice=pendingRulesBlock(marked.rules);
+    if(oldNotice && outside.includes(oldNotice))outside=outside.replace(oldNotice,"");
+    else outside=outside.slice(0,marked.start)+outside.slice(marked.end);
+  }
+  const named=extractNamedRules(outside);outside=named.text;
+  if(named.rules)rules+=(isRulesPopulated(rules)?"\n\n":"")+named.rules;
+  const agents=block+(outside.startsWith("\n")||outside.startsWith("\r\n")?"":"\n")+outside;
+  if(!isRulesPopulated(rules))return {agents,architecture};
+  const existing=architecture??"";
+  const imported="## "+IMPORT_NOTICE+"\n\nThese imported rules remain binding. Their implementation status is unverified; migration changes location only. Urgently inspect applicable code/tests before affected work. Merge verified constraints beside their responsible files; keep unresolved requirements clearly marked here and implement corrections only within authorized project scope. Preserve every requirement when reconciling this section.\n\n"+rules+"\n";
+  return {agents,architecture:existing+(existing?(existing.endsWith("\n")?"\n":"\n\n"):"# Architecture\n\n")+imported};
+}
 export function parseRules(text) {
   const a=count(text,REPO_RULES_START),b=count(text,REPO_RULES_END);
   if (!a&&!b&&!text.includes("bridgecode:repo-rules:")) return null;
@@ -57,8 +104,20 @@ export function adoptUnmarkedAgents(existing, canonical) {
   if(existing===canonical||existing.replaceAll("\r\n","\n")===canonical.replaceAll("\r\n","\n"))return {rules:"",current:true};
   return null;
 }
+export function adoptKnownUnmarked(existing,canonical) {
+  const lf=canonical.replaceAll("\r\n","\n").trimEnd();
+  for(const core of [lf,lf.replaceAll("\n","\r\n")]){
+    const start=existing.indexOf(core),end=start+core.length;
+    if(start<0||existing.indexOf(core,end)!==-1)continue;
+    if(start&&existing[start-1]!=="\n")continue;
+    if(end<existing.length&&!/^[\r\n]/.test(existing.slice(end)))continue;
+    return {start,end,schema:2,rules:parseRules(existing)?.rules??""};
+  }
+  throw new Error("Unknown legacy instructions; reconcile the locally changed core before migration");
+}
 export function adoptLegacy(existing,canonical) {
   const old=splitCanonicalAgents(existing), known=splitCanonicalAgents(canonical);
   if(old.prefix.replaceAll("\r\n","\n")!==known.prefix.replaceAll("\r\n","\n"))throw new Error("Unknown legacy instructions; export and reconcile rules before migration");
-  return {rules:old.templateRules.replace(/\r?\n$/,"")};
+  const boundary=markdownHeadings(old.templateRules).find(h=>h.level<=2)?.start??old.templateRules.length;
+  return {rules:old.templateRules.slice(0,boundary).replace(/\r?\n$/,""),outside:old.templateRules.slice(boundary)};
 }

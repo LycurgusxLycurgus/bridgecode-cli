@@ -1,16 +1,16 @@
 {
   "package": "@bridgecode/cli",
-  "version": "4.3.0",
+  "version": "4.3.1",
   "schemaVersion": 2,
   "files": {
-    "AGENTS.md": "689482fe52bfe8308244fdc44229a904ed1a3d4ce2ab4207b59d3829ad88a287",
-    "README_HUMAN.txt": "297756d259596c26d6c60b61a1bc1ed7039f704e7908c1e0b0a7133ad0908f29",
-    "bridgecode/best-agent.md": "1b6aa0666d958693951c5600c357e87b0b362770a497d7fcad61ee6d55e8eafd",
+    "AGENTS.md": "cbaa33156ed25f740330d5793161c71642250e742916980345fa0f4dc6f14b2b",
+    "README_HUMAN.txt": "cd4cb66ce31e02208687c7fd8dcb28fb092edcf71684bb32bd6fe6fe77f7ce6f",
+    "bridgecode/best-agent.md": "b5985b8d81fe508bcead203c9030e2a6caf32032696cd9b9e75c1c6c46cc8656",
     "bridgecode/taste.md": "190c7802e0db34bfe431eea08013446559af8ddbcb30300ac46ce370068e71bf",
     "bridgecode/design.md": "b2cfb581be5fadc964602c5b9dfb02b164e4ff42093c4011b2f28046394486b9",
     "bridgecode/writing.md": "1b8c0ef066fce37d8cffdfe1653eb73d90cbc33d7a243c0dda145198a47b864d",
     "bridgecode/copywriting.md": "3012f09c1d4fbd7056d90b0411086ec5338d54b122574c20c81fda817ac5c564",
     "bridgecode/monoprompting.md": "936f5a872eb1c7ca2e60d054b03395796609db3bd0e9d9449e4cc59bed278fc2"
   },
-  "hookHash": "dc3a715ed6d51013feeae974ef0ec242cb9a3f2b3d09e6439e7f9ec4692f462a"
+  "hookHash": "7215b90fa902e3218bc517e6d7ed716bb13a819644ef120e178ab055b25e3ef7"
 }
