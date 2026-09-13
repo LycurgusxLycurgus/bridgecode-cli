@@ -1,6 +1,6 @@
 {
   "name": "@bridgecode/cli",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "description": "Install, update, and verify Bridgecode repo-local instructions.",
   "type": "module",
   "bin": {

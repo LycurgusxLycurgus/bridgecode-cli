@@ -1,4 +1,4 @@
-BRIDGECODE 4.3.1 — QUICK GUIDE
+BRIDGECODE 4.3.2 — QUICK GUIDE
 
 Tell your agent the outcome you want. Bridgecode chooses ROBUST for consequential uncertainty and LEAN (PATCH, DEBUG, ASSESS) for sufficiently understood work. Both research as needed, resolve user decisions, define completion, execute within scope, validate, and check memory.
 
@@ -8,7 +8,7 @@ THE PROCESS
 
 Every turn starts with an explicit route, each stage's action and reason, and a pointer to agentic/analysis.md. Its first content block develops intent, a useful perspective (Person, Core, representative work) or small complementary amalgam, and supported anticipatory corrections. Research then tests provisional choices before questions, final planning, and execution. Read-only/no-file-write requests use a compatible visible brief; exact-output constraints remain intact. When your choice is needed, it presents one or two high-level perspective-based questions through native question cards if available. ROBUST pauses for decisions or checkpoints you requested; it continues when the contract is settled.
 
-agentic/analysis.md holds the current decision brief, checklist, evidence, review state, and next action. Each item says what must work and what proves it. The implementation uses the smallest mechanism that meets those criteria. One final regression block exercises real backend or frontend behavior. A fresh native reviewer with the same model and reasoning effort returns PASS, FIX, or REPLAN. The root repairs findings; the second REPLAN stops automatic retries and identifies what is missing. Missing review capability or tests remain explicitly unverified.
+agentic/analysis.md holds the current decision brief, stable acceptance checklist, evidence, review-cycle state, and next action. Build the smallest mechanism meeting those criteria; keep engineering safeguards in the stages where they govern decisions. Run relevant real regression checks. One fresh native reviewer using the implementing root’s same model and reasoning effort returns PASS, FIX, or REPLAN. PASS finishes after root verification; FIX/REPLAN permits one coherent correction stage and relevant retesting, followed by one fresh terminal review with the same model/effort requirement: PASS or UNRESOLVED. UNRESOLVED stops the cycle and reports blockers. No third implementation reviewer, repeated reviewer-driven corrections, or budget reset on resume; a new user instruction must explicitly open a new cycle. Missing review capability or tests remain unverified.
 
 DESIGN AND WRITING
 

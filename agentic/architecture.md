@@ -25,7 +25,7 @@ codex_package/
 │   ├── copywriting.md            Customer outcome, credible value, useful product language
 │   └── monoprompting.md          Self-contained reusable instruction contracts
 ├── hooks/bridgecode-turn.mjs     Source of the installed bounded heartbeat/recovery hook
-├── legacy/{4.1.0,4.3.0}.json     Exact prior payload snapshots for trusted migration validation
+├── legacy/{4.1.0,4.3.0,4.3.1}.json Exact prior payload snapshots for trusted migration validation
 ├── src/
 │   ├── cli.mjs                   Argument parsing and install/update/doctor/recover dispatch
 │   ├── install.mjs               Shared lifecycle projection, ownership checks, mutation plan
@@ -51,6 +51,7 @@ codex_package/
 └── agentic/
     ├── analysis.md (when active) Temporary first-block decision brief, checklist and recovery
     ├── architecture.md          This maintained implementation map
+    ├── engineering-distillation.md Compact source-preserving 4.0/4.1 reference; not runtime policy
     └── primitives-private.md    Private explanatory audit; gitignored and excluded from npm
 ```
 
@@ -76,7 +77,7 @@ Semantic reconciliation belongs to the agent: inspect applicable constraints bef
 
 `transaction.applyTransaction` records originals and intended hashes in `.bridgecode/transaction.json`, checks preconditions, and runs post-verification. `recoverTransaction` restores only unchanged originals or known transaction output, retains the journal on outside edits or failed restoration, and refuses recovery while another recorded owner may be alive. It removes only recorded empty directories after successful recovery. `safety.test.mjs` exercises post-check failure, rollback, preserved outside edits, retryable recovery, and precondition conflict. Multi-file updates are journaled, not filesystem-atomic; do not erase failed-recovery material.
 
-`hooks.mergeHooks` owns only recorded Bridgecode entries and its script; other hook entries/keys survive. The hook validates project/core identity, emits a short UserPromptSubmit reminder, and returns bounded core guidance for compact SessionStart. Its script fixtures verify JSON output and fallback, not host trust or live delivery. Hook context follows the [official hook contract](https://learn.chatgpt.com/docs/hooks). Fresh review uses native model/effort inheritance only when no overriding configuration changes it, as described in [official subagent configuration](https://learn.chatgpt.com/docs/agent-configuration/subagents); never report settings from a different task or a configured default as the actual active settings.
+`hooks.mergeHooks` owns only recorded Bridgecode entries and its script; other hook entries/keys survive. The hook validates project/core identity, emits a short UserPromptSubmit reminder, and returns bounded core guidance for compact SessionStart. Its fixtures verify JSON output/fallback, not host trust or live delivery. Hook context follows the [official hook contract](https://learn.chatgpt.com/docs/hooks). Both native implementation reviewers use the implementing root’s same active model and reasoning effort. Use guaranteed native inheritance without routing overrides, or explicitly match verified active settings; unrelated defaults do not establish the active settings. Unavailable matching review remains incomplete and requires user direction.
 
 ## Run and release
 
@@ -85,3 +86,11 @@ From this package directory: `npm run sync:payload` in the paired authoring work
 Tests establish deterministic lifecycle and hook-protocol behavior. Policy walkthroughs and static anchors do not establish improved coding performance; matched agent tasks and live trusted-host sessions would be separate evidence.
 
 The 4.3.1 entry gate lives in AGENTS.md; Best Agent and the heartbeat point to that authority. Every turn declares the route and per-stage reasons, points to analysis.md, and creates/revalidates its first-block three-move operational brief before task-directed work. Necessary instruction/memory reads precede the write; research refines provisional choices in place. Read-only and exact-output constraints have compatible exceptions. Same-objective follow-ups update one temporary board; paused/concurrent work survives; completion condenses durable knowledge and removes finished state. `policy.test.mjs` protects these wording boundaries and `hooks.test.mjs` checks actual emitted reminders, without claiming universal agent compliance.
+
+The 4.3.2 shared stages carry engineering policy at its decision point. Research establishes sufficient applicable evidence; planning freezes the acceptance contract; execution selects the smallest adequate local mechanism; review admits concrete acceptance blockers; condensation records verified facts without reopening improvement work. The review state is first PASS → root verification, or first FIX/REPLAN → one correction stage → terminal PASS/UNRESOLVED; no third implementation reviewer. Recovery preserves cycle identity, phase and spent budget. The CLI installs this policy; it is not a new runtime state-machine service. Contract anchors and actual hook-output tests protect wording/transport; no claim of empirical loop elimination follows.
+
+Source and adaptation remain distinct. `engineering-distillation.md` re-encodes the user-supplied 4.0/4.1 excerpts as one block, retaining historical route names, numeric guidance and qualifications; it is authoring reference excluded from npm. Runtime rules selectively preserve their locality, boundary and proportionality mechanisms, treat LOC/reuse counts as context-dependent guidance, and adopt the user's newer bounded review/test policy where it differs from historical full-block repetition.
+
+From [Ponytail's ladder and safeguards](https://github.com/DietrichGebert/ponytail/blob/main/skills/ponytail/SKILL.md): understand affected code/callers first; prefer existing behavior, reuse, standard/library-platform capability and installed tools before minimal new code; repair the shared cause; keep real safety and requested behavior. Its [complexity-only review](https://github.com/DietrichGebert/ponytail/blob/main/skills/ponytail-review/SKILL.md) is not adopted as a separate pass. Shortest-diff scoring, automatic feature substitution, persistent intensity modes and rigid tiny-test limits would conflict with Bridgecode's explicit acceptance/host rules. Concrete simpler-mechanism findings must pass the same blocker gate. Ponytail's benchmark claims are not Bridgecode evidence.
+
+The private primitives reference revision 2.2 explicitly constructs stage guards and bounded review through existing Task/State/Evidence/Executor roles, composition/check operations and policy/acceptance constraints. It preserves the historical V2 judgment and explains that relocating rules into stages is useful organization, not a new derivation or proof of compliance.

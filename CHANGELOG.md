@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.2
+
+Embed proportionate engineering and stable acceptance/relevance gates in shared research, planning, execution, review and condensation stages. Preserve supported-path correctness and safety while excluding speculative requirements and optional refinements.
+
+Replace recursive review with a fresh same-model/same-effort first verdict, at most one coherent correction stage, and a terminal same-model/same-effort PASS/UNRESOLVED verdict. Recovery preserves the cycle budget; no third implementation reviewer or reviewer-driven correction pass. Update hook/guide wording and include the exact 4.3.1 migration snapshot.
+
 ## 4.3.1
 
 Restore the explicit every-turn route and analysis-file pointer, with a first-block three-move Best-Agent decision brief before task work. Follow-ups update one temporary board; completion condenses durable knowledge and removes completed state while preserving unfinished work.

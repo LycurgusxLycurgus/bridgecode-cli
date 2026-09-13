@@ -47,7 +47,7 @@ Save image prompts and consequential reference revisions alongside the reference
 
 Codex designs and implements the frontend directly.
 
-Preserve the user's selected model and reasoning effort. Use the native same-model review loop in AGENTS.md; do not switch models solely for this specialist. Image generation remains a first-class design capability.
+Preserve the user's selected implementing model and reasoning effort. Independent implementation review uses the bounded reviewer model, relevance gate and terminal cycle in AGENTS.md; this specialist grants no additional review rounds. Image generation remains a first-class design capability.
 
 Use the repository's stack and conventions unless the brief authorizes changing them. Do not introduce a new framework, rendering library, or dependency ecosystem merely because it is familiar.
 

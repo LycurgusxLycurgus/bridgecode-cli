@@ -10,12 +10,22 @@ test("source and package instructions are byte-identical",async t=>{
 });
 test("policy contract anchors remain present (static checks, not behavioral certification)",async()=>{
  const core=await readFile(path.join(PACKAGE_ROOT,"AGENTS.md"),"utf8");
- for(const fragment of ["Person","Core","Magnum Opus","distinct responsibility","request_user_input_async","dependent actions wait","second REPLAN","when the cause is structural","Never discard an unmapped rule","same active model and reasoning effort","no inherited conversation"])
+ for(const fragment of ["Person","Core","Magnum Opus","distinct responsibility","request_user_input_async","dependent actions wait","terminal review","when the cause is structural","Never discard an unmapped rule","same active model and reasoning effort","no inherited conversation"])
  assert.ok(core.includes(fragment),fragment);
  assert.doesNotMatch(core,/ROBUST.*always stop/i);
  for(const name of ["best-agent","taste","design","writing","copywriting","monoprompting"])assert.ok(core.includes("bridgecode/"+name+".md"));
  const design=await readFile(path.join(PACKAGE_ROOT,"bridgecode/design.md"),"utf8");
  assert.match(design,/three/i);assert.match(design,/Taste|taste/);
+});
+test("bounded review and stage-local proportionality contract (static policy, not model behavior)",async()=>{
+ const core=await readFile(path.join(PACKAGE_ROOT,"AGENTS.md"),"utf8");
+ for(const anchor of ["Freeze this acceptance contract","first adequate option","relevance gate","An evidenced edge case on a supported path remains relevant","5000 tokens or less","exactly one correction stage","Never spawn a third implementation reviewer","UNRESOLVED stops further implementation","does not reset the budget","not another improvement pass","root verification contradicts PASS"])
+ assert.ok(core.includes(anchor),anchor);
+ const hook=await readFile(path.join(PACKAGE_ROOT,"hooks/bridgecode-turn.mjs"),"utf8");
+ const guide=await readFile(path.join(PACKAGE_ROOT,"README_HUMAN.txt"),"utf8");
+ for(const text of [core,hook,guide])assert.doesNotMatch(text,/second[- ]REPLAN|Astra|gpt-6-astra|then requests a fresh review/i);
+ assert.ok(hook.includes("terminal PASS/UNRESOLVED"));
+ assert.ok(guide.includes("No third implementation reviewer"));
 });
 test("publish workflow resolves the exact artifact version without publishing",async()=>{
  const workflow=await readFile(path.join(PACKAGE_ROOT,".github/workflows/publish.yml"),"utf8");

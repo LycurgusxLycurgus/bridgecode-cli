@@ -8,7 +8,7 @@ import { parseBootstrap } from "../src/instructions.mjs";
 import { parseManagedAgents, buildLegacyAgents, splitCanonicalAgents, pendingRulesBlock, parseRules } from "../src/repo-rules.mjs";
 import { sha256 } from "../src/manifest.mjs";
 import { updateBridgecode } from "../src/update.mjs";
-import { fixture, PACKAGE_ROOT, simulatedPackage, snapshot, legacyFiles, MANAGED_PATHS, package430 } from "./helpers.mjs";
+import { fixture, PACKAGE_ROOT, simulatedPackage, snapshot, legacyFiles, MANAGED_PATHS, packageSnapshot } from "./helpers.mjs";
 const options=root=>({project:root,packageRoot:PACKAGE_ROOT});
 test("install, doctor, true no-op update and projected dry-run",async t=>{
  const root=await fixture(t);const before=await snapshot(root);
@@ -57,7 +57,7 @@ for(const marked of [false,true])test("4.1 "+(marked?"managed":"unmarked")+" mig
  const pkg=await simulatedPackage(t);
  await updateBridgecode({project:root,packageRoot:pkg});
  parsed=parseManagedAgents(await readFile(path.join(root,"AGENTS.md"),"utf8"));
- assert.equal(parsed.rules,"");assert.equal(parsed.version,"4.3.2");
+ assert.equal(parsed.rules,"");assert.equal(parsed.version,"4.3.3");
  assert.equal(await readFile(path.join(root,"agentic/architecture.md"),"utf8"),memory);
  // Reconciliation is repository-owned: deleting one resolved rule does not invalidate the core.
  await writeFile(path.join(root,"agentic/architecture.md"),memory.replace(rules,"- Remaining unresolved rule"));
@@ -89,8 +89,8 @@ test("hook configuration preserves unrelated hooks and supports disabling",async
  assert.deepEqual(c.hooks.UserPromptSubmit,[custom]);
  assert.equal((await inspectInstallation(options(root))).ok,true);
 });
-for(const existingMemory of [false,true])test("4.3.0 rule transfer: dry-run, rollback, ordering, hooks and idempotence; existing memory="+existingMemory,async t=>{
- const root=await fixture(t),oldPackage=await package430(t);
+for(const previousVersion of ["4.3.0","4.3.1"])for(const existingMemory of [false,true])test(previousVersion+" rule transfer: dry-run, rollback, ordering, hooks and idempotence; existing memory="+existingMemory,async t=>{
+ const root=await fixture(t),oldPackage=await packageSnapshot(t,previousVersion);
  await installBridgecode({project:root,packageRoot:oldPackage,instructionFiles:"both"});
  const original=await readFile(path.join(root,"AGENTS.md"),"utf8");
  const prefix="# Local instructions\r\nKeep this prefix.  \r\n",suffix="\n## Other instructions\nKeep this suffix.\n";
@@ -125,8 +125,8 @@ test("plain repo-rule sections migrate while unrelated blocks and fenced example
  assert.ok(memory.includes(rules));assert.ok(!memory.includes("Example only"));
  assert.equal((await updateBridgecode(options(root))).changes.length,0);
 });
-test("unmarked canonical 4.3 core with surrounding instructions upgrades safely",async t=>{
- const root=await fixture(t),old=JSON.parse(await readFile(path.join(PACKAGE_ROOT,"legacy/4.3.0.json"),"utf8"));
+for(const previousVersion of ["4.3.0","4.3.1"])test("unmarked canonical "+previousVersion+" core with surrounding instructions upgrades safely",async t=>{
+ const root=await fixture(t),old=JSON.parse(await readFile(path.join(PACKAGE_ROOT,"legacy/"+previousVersion+".json"),"utf8"));
  for(const [p,s]of Object.entries(old.files)){await mkdir(path.dirname(path.join(root,p)),{recursive:true});await writeFile(path.join(root,p),s);}
  const prefix="# Local prefix\r\nKeep first.\r\n",suffix="\n## Repo rules\n- Keep data safe.\n## Custom\nKeep last.\n";
  await writeFile(path.join(root,"AGENTS.md"),prefix+old.files["AGENTS.md"].replaceAll("\r\n","\n").replaceAll("\n","\r\n")+suffix);

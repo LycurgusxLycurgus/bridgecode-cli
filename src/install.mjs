@@ -19,11 +19,12 @@ export async function prepareLifecycle({command,project=".",packageRoot,dryRun=f
   const agentsBytes=await read("AGENTS.md"),text=agentsBytes?.toString("utf8")??"";
   const canonical=(await readFile(path.join(context.packageRoot,"AGENTS.md"))).toString("utf8"),version=context.packageJson.version;
   let parsed=parseManagedAgents(text),rules="",mode="",adoptedLegacy=false,legacyOutside="",oldHashes={};
+  const unmarkedVersion=/^# Bridgecode (4\.3(?:\.1)?)\s*$/m.exec(text)?.[1];
   if(metadata){await verifyInstalled(context,metadata,read);mode="replace managed core";}
   else if(parsed)throw new Error("Marked installation has no trustworthy metadata; recover installation metadata first");
   else if(adoptUnmarkedAgents(text,canonical)){mode="adopt current source";}
-  else if(/^# Bridgecode 4\.3\s*$/m.test(text)){
-    const old=await legacyContext(context.packageRoot,"4.3.0");
+  else if(unmarkedVersion){
+    const old=await legacyContext(context.packageRoot,unmarkedVersion==="4.3"?"4.3.0":unmarkedVersion);
     parsed=adoptKnownUnmarked(text,old.files["AGENTS.md"]);oldHashes=old.hashes;mode="adopt legacy 4.3";
   }
   else if(text.includes("Bridgecode 4.1 Processflow Router")||text.includes("## 5) Specific Repo Rules")){
