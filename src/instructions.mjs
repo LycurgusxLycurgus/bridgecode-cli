@@ -1,4 +1,5 @@
-import { sha256, validateRelativePath } from "./manifest.mjs";
+// 4.3 bootstraps: parsed and verified for installed 4.3 releases, removed on update or uninstall.
+import { sha256 } from "./manifest.mjs";
 
 export const BOOTSTRAP_END = "<!-- bridgecode:bootstrap:end -->";
 
@@ -56,18 +57,6 @@ export function parseBootstrap(text) {
   };
 }
 
-export function upsertBootstrap(existingText, version) {
-  const parsed = parseBootstrap(existingText);
-  const eol = existingText.includes("\r\n") ? "\r\n" : "\n";
-  const block = buildBootstrap(version, eol);
-  if (parsed) {
-    return { text: `${existingText.slice(0, parsed.start)}${block}${existingText.slice(parsed.end)}`, block };
-  }
-  if (existingText.length === 0) return { text: `${block}${eol}`, block };
-  const separator = existingText.endsWith("\n") ? eol : `${eol}${eol}`;
-  return { text: `${existingText}${separator}${block}${eol}`, block };
-}
-
 export function removeBootstrap(existingText) {
   const parsed = parseBootstrap(existingText);
   if (!parsed) return existingText;
@@ -80,23 +69,3 @@ export function removeBootstrap(existingText) {
   return `${existingText.slice(0, start)}${existingText.slice(end)}`;
 }
 
-export function selectInstructionPaths({ mode, customPaths, existingClaude, previousPaths }) {
-  const selected = new Set();
-  if (mode === "claude" || mode === "both" || (mode === "auto" && existingClaude)) {
-    selected.add("CLAUDE.md");
-  }
-  if (mode === undefined && previousPaths) {
-    for (const item of previousPaths) selected.add(validateRelativePath(item, "instruction path"));
-  }
-  for (const item of customPaths ?? []) {
-    selected.add(validateRelativePath(item, "instruction path"));
-  }
-  return [...selected].sort();
-}
-
-export function assertInstructionMode(mode) {
-  const allowed = new Set(["auto", "agents", "claude", "both", "none"]);
-  if (!allowed.has(mode)) {
-    throw new Error(`Invalid --instruction-files value: ${mode}`);
-  }
-}

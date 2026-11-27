@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "packageVersion": "1.2.0",
+  "profile": "town",
+  "root": "Opus 5.5 medium",
+  "council": "Opus 5.5 medium + gpt-6.1-terra max",
+  "explorer": "gpt-6.1-terra medium",
+  "builders": "none",
+  "buildersDetail": null,
+  "buildersSource": null,
+  "planningMode": "CLOOP town. One flow, kept by the engine. At every step: `node .cloop/cloop.mjs status` → act → record through the engine → `advance`; the cards status prints carry the detail; a refusal names the next step; never edit cloop/state.json, log.jsonl or board.md by hand. Remove before adding, whole before detail, goal before measure; the size of a change answers the size of the problem. The small loop builds and corrects; every one-shot, loop and explore opens with PREVENT. Every step back: the whole before the detail, all the evidence, the class and root cause, removal first, the real property, one correction for the whole property. The engine computes each outcome and the rung: small (your step back) → full (two loop-breakers) → re-define (the user approves a re-plan); PASS returns to small, ADVANCED de-escalates from full and re-define. BEST moves only forward. Real runs judge; settle every NOT_MET with a run the engine makes; never shorten a run, a wait or a judging step. Judges are read-only and blind; loop-breakers write in their own worktrees; builders, when listed, take only build steps. Watch for a spiral and a virtuous cycle. The user is in the loop: ask their decisions with a recommendation and keep working on the rest. Send `report` after every council and `report --final` first at ACCEPT. After any compaction, reread this file and run `status`.",
+  "implementationMode": "",
+  "installedAt": "2026-11-26T12:00:08.859Z",
+  "updatedAt": "2026-11-26T12:00:08.859Z",
+  "instructionFile": "CLAUDE.md",
+  "managedBlockSha256": "c084be2184554ea5d18a9d1e4573b17e10beb5a7e16c2c60e5088bb16074beb8",
+  "profileSha256": "b18d7118126ae7836af23e34f6fdc8e14192fe7baac69812abfe15e6835567c1",
+  "hookMode": "claude",
+  "hookFiles": [
+    ".claude/hooks/cloop-turn.mjs"
+  ],
+  "created": {
+    "agents": false,
+    "hooksJson": false,
+    "hookScript": true,
+    "stateDir": true,
+    "claudeDir": false
+  },
+  "codexPermission": true
+}

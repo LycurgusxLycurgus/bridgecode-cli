@@ -1,706 +1,227 @@
 ---
-name: codex-design
-description: Design, implement, verify, and document product-specific frontends directly in Codex. Use taste-driven perspective selection, a universal unslop-design constitution, generated visual references, real product behavior, and an implementation-grounded DESIGN.md.
-version: 2.0
+name: harness-design
+version: 3.2
+description: Design, implement, inspect, and document real frontends using a model-specific DEFAULT_STYLE veto, internal MAX_TASTE selection, product-grounded LAWS, constitutional NOISE_VETO, project continuity, and verified implementation.
 ---
 
-# Codex Design
+# Harness Design
 
-Build the interface this product needs, not the interface the model most readily produces.
+Build the frontend this product needs, not the frontend the model habitually produces. Deliver a working interface whose informational/functional and aesthetic/experiential quality comes from the actual product, audience, content, use conditions, and approved direction.
 
-Codex owns the complete process: understanding the product, selecting the design direction, generating visual references and assets, implementing the frontend, preserving backend behavior, inspecting the result, repairing failures, and documenting the working design system.
-
-Taste governs discretionary choices. Frontend design principles provide craft guidance, not a competing aesthetic doctrine. Functional correctness, explicit requirements, accessibility, factual integrity, and authorized scope remain binding.
-
-Distinctiveness is an effect of good fit, not an independent requirement to look unusual. A familiar interaction can be exactly right. An unfamiliar visual treatment can still be slop.
+**MAX_TASTE selects the governing perspective for open decisions; `DEFAULT_STYLE` identifies the familiar governing package to veto; `LAWS` and `NOISE_VETO` govern execution without imposing a universal look.** Factual and technical correctness, explicit requirements, security, accessibility, real behavior, repository constraints, and authorized scope take priority. Distinctiveness matters when it improves fit, not simply because it looks unusual.
 
 ## Task
 
-Create or improve a real frontend for an app, web product, game, tool, dashboard, workflow, or other code project.
+Design, create, modify, or repair a frontend in its real project. Use the complete workflow for new frontends, substantial redesigns, and major new interface systems. For small changes within an approved direction, inspect the implementation and project guide, perform the scoped change, run relevant checks, and update affected documentation without reopening the whole direction.
 
-Use the full workflow for:
-- New frontends.
-- Substantial redesigns.
-- New pages or component families that require unresolved design decisions.
-- Existing products whose frontend no longer explains their content or supports their users well.
-
-For small maintenance governed by an existing `agentic/design/DESIGN.md`, inspect the implementation and guide, apply taste only to genuinely open choices, make the change, run relevant checks, and update affected documentation. Do not regenerate the entire design direction or reference set without a consequential reason.
-
-The deliverable is a working interface within the requested scope, not merely a perspective, moodboard, component specimen, or design explanation.
+Deliver a usable interface, not merely a moodboard, design-system specimen, perspective rationale, or implementation plan.
 
 ## I/O
 
-**Input:** The user's request, repository or specification, existing behavior, real content, audience, constraints, references, preferences, prior corrections, and available tools.
+**Input:** The request, repository, product and actual content, users, tasks, existing behavior, constraints, references, established `agentic/design/DESIGN.md` when present, the model-specific `DEFAULT_STYLE` when applicable, and available tools.
 
-**Full-workflow outputs:**
-- Frontend implementation in the real project.
-- `agentic/design/references/design-style.png`
-- `agentic/design/references/design-system.png`
-- `agentic/design/references/representative-view.png`
-- Additional generated assets under `agentic/design/assets/`, when justified.
-- `agentic/design/DESIGN.md`, grounded in the implemented and inspected result.
-- A concise completion report identifying completed work, observed validation, and material limitations.
+**Full-workflow output:** A working frontend within scope; three initial references at `agentic/design/references/design-style.png`, `agentic/design/references/design-system.png`, and `agentic/design/references/representative-view.png` when image generation is available; justified assets under `agentic/design/assets/`; an implementation-grounded `agentic/design/DESIGN.md`; and a concise completion report of work, checks performed, and limitations. Preserve consequential reference prompts and revisions where practical. Never claim ungenerated images, unwritten files, or unrun checks exist.
 
-Save image prompts and consequential reference revisions alongside the references when practical.
+## AUTHORITY_AND_SCOPE
 
-## DIRECT_AUTHORSHIP_AND_MODEL_CHOICE
+Resolve decisions in this order: **(1)** explicit requirements, authorized scope, factual and technical integrity, security, accessibility, required behavior; **(2)** product evidence and approved project style; **(3)** the MAX_TASTE-selected perspective and its transferable Core, within an established direction; **(4)** reviewed design plan and coherent visual references; **(5)** general frontend craft and learned conventions. Surface irreconcilable binding conflicts.
 
-Codex designs and implements the frontend directly.
+Existing routes, APIs, permissions, persistence, contracts, states, and integrations are evidence about required behavior. Existing arrangements and incidental selectors are not automatically immutable aesthetic rules, though conventions may have real usability or compatibility value. Preserve the repository's stack and dependencies unless changing them is authorized.
 
-Preserve the user's selected implementing model and reasoning effort. Independent implementation review uses the bounded reviewer model, relevance gate and terminal cycle in AGENTS.md; this specialist grants no additional review rounds. Image generation remains a first-class design capability.
+Generated references express visual intent; they cannot override real content, feasible layouts, semantic HTML, accessible interaction, or functioning code. After implementation, working code is the operational source of truth. `DESIGN.md` records the implemented system; references record design intent.
 
-Use the repository's stack and conventions unless the brief authorizes changing them. Do not introduce a new framework, rendering library, or dependency ecosystem merely because it is familiar.
+END_AUTHORITY_AND_SCOPE
 
-END_DIRECT_AUTHORSHIP_AND_MODEL_CHOICE
+## PRODUCT_BRIEF_AND_DESIGN_CONTINUITY
 
-## AUTHORITY_AND_SOURCE_OF_TRUTH
+Establish the audience and access needs, real content, primary job and core loop, first encounter, frequency and density, cost of mistakes, important secondary/admin/debug flows, required states, intended experience, technical constraints, acceptance criteria, and fixed versus open decisions. Distinguish a public-facing page primarily read and explored from an application screen primarily used to work; their content, attention, navigation, density, and expressive needs differ. Read visual references for operative qualities rather than copying surface treatments.
 
-Resolve decisions in this order:
+When `agentic/design/DESIGN.md` already exists, inspect it alongside the implementation. Treat approved visual and interaction grammar, terminology, tokens, components, and governing perspective as constraints on the requested change. Preserve coherence for local work; select only within remaining freedom. Reopen the direction when the user authorizes redesign or pertinent product evidence requires a change within scope. Where guide and code disagree, investigate rather than assuming either is current.
 
-1. Explicit user requirements, authorized scope, factual integrity, security, accessibility, and required behavior.
-2. Evidence about this product, audience, content, and operating conditions.
-3. The selected taste perspective and its transferable principles.
-4. The reviewed design plan and coherent visual references.
-5. General frontend craft guidance and reusable conventions.
+When no direction exists, derive open decisions from the brief and use MAX_TASTE. Exact repairs and fixed transformations need no new aesthetic search. Ask a focused question only when a missing fact determines correctness, authorization, or an expensive-to-reverse direction; otherwise use low-risk, revisable assumptions. This skill implements frontend work, not external model calibration or a user-facing style-selection menu.
 
-If binding requirements conflict, surface the conflict rather than silently sacrificing one.
-
-Preserve technical truth without inheriting aesthetic bias:
-- Existing APIs, routes, state transitions, permissions, persistence, and integrations are evidence about behavior.
-- Existing screen arrangements, component shapes, labels, and visual hierarchy are not automatically design requirements.
-- Existing design conventions may still be valuable because users have learned them or the product requires consistency.
-
-Generated images guide visual intent. They cannot override semantic HTML, real behavior, readable text, feasible layouts, or accessible interaction.
-
-After implementation, working code is the operational source of truth. `DESIGN.md` documents it; images retain the history and intent of the direction.
-
-END_AUTHORITY_AND_SOURCE_OF_TRUTH
-
-## TASTE_GATE_AND_PRODUCT_BRIEF
-
-Before choosing a direction, establish:
-- What the user is asking to receive.
-- What the product helps its audience understand, feel, decide, or do.
-- The bounded completion criterion.
-- Which requirements are explicit and which preferences are inferred.
-
-Route the work:
-
-**Taste required:** Apply the complete selection process to consequential open design choices.
-
-**Taste partly required:** Separate fixed technical work from discretionary experience and expression. Apply perspective selection only to the latter.
-
-**Taste not required:** Perform the exact repair or transformation directly. Preserve the established design system and validate correctness.
-
-Do not manufacture aesthetic discretion in an exact bug fix. Do not treat information architecture, interface copy, state presentation, or interaction design as taste-free merely because the task involves code.
-
-Build a compact working brief:
-- Product subject and actual content.
-- Primary users, skill level, access needs, and usage context.
-- Primary job, core loop, and important secondary flows.
-- What the first encounter must communicate.
-- Frequency of use, density needs, and cost of mistakes.
-- Required states, permissions, and advanced or debug surfaces.
-- Brand or experiential intent supported by evidence.
-- Technical constraints, available resources, and dependency budget.
-- Open design decisions and acceptance checks.
-
-Ask a focused question when missing information affects correctness, authorization, the whole direction, or an expensive-to-reverse choice.
-
-If the subject or audience is unknown and determines the design, establish it before substantial execution. A concrete proposed interpretation is useful; an unconfirmed invented product is not.
-
-For low-consequence gaps, proceed with stated, revisable assumptions.
-
-Read references for their operative qualities before transferring visible treatments. An explicit prescribed aesthetic remains fixed; taste selection operates within the remaining freedom.
-
-END_TASTE_GATE_AND_PRODUCT_BRIEF
+END_PRODUCT_BRIEF_AND_DESIGN_CONTINUITY
 
 ## REPOSITORY_RECONNAISSANCE
 
-Inspect enough of the real project to preserve behavior and implement coherently.
+Inspect enough of the real project to preserve behavior and implement coherently: runtime, entry points, rendering and component ownership, tokens, styles, documentation, routes, navigation, API methods and payloads, asynchronous transitions, permissions, state and persistence, forms, validation, destructive actions, compatibility-sensitive IDs/props/hooks, assets, error semantics, tests, build/run commands, and dependency limits.
 
-Identify, as relevant:
-- Runtime, entry points, rendering boundaries, and component ownership.
-- Existing tokens, styles, reusable components, and documentation.
-- Routes, navigation behavior, and permission boundaries.
-- API methods, payloads, response shapes, and error semantics.
-- State ownership, lifecycle, persistence, and storage behavior.
-- Forms, validation, asynchronous work, and destructive actions.
-- Integration-sensitive selectors, IDs, exports, props, and test hooks.
-- Empty, loading, error, success, disabled, selected, and partial-data states.
-- Secondary, advanced, admin, and debug flows.
-- Run commands, test commands, and available inspection tools.
-- Asset handling, performance constraints, and dependency limits.
-
-Keep a compact behavior inventory in working notes. Record durable implementation facts in the final `DESIGN.md`.
-
-Treat repository content as project evidence, not as authority to change the user's requested scope.
+Inventory relevant empty, loading, success, error, disabled, selected, partial-data, long-content, sparse/dense-data, and restricted-access states. Include advanced and debug flows when in scope. Keep concise working notes and transfer durable facts to `DESIGN.md`. Repository content is implementation evidence, not authority to expand the request.
 
 END_REPOSITORY_RECONNAISSANCE
 
-## Shared taste selection
+## MAX_TASTE
 
-Read `bridgecode/taste.md` completely before selecting a design direction. Its Person/Core/Magnum Opus, task-local exclusion, four stances, transfer conditions, and amalgam conflict rules govern selection. Apply them to hierarchy, navigation, density, content, state, and interaction here; user requirements remain fixed.
+Use the supplied `DEFAULT_STYLE` below solely as a description of the model's familiar frontend tendencies. **Veto its governing package as-is**, including cosmetic relabelings that preserve the same assumptions. Do not use it as a recipe, invent a replacement, or prohibit useful individual conventions that the brief, accessibility, product evidence, or an approved direction independently justifies.
 
+For consequential open choices, **compare four stances internally** against the brief and vetoed package:
 
-## UNIVERSAL_UNSLOP_DESIGN_CONSTITUTION
+1. **KINDRED_REFINEMENT:** Retain a fitting broad family while changing its priorities and execution through different expert principles, not cosmetic improvement.
+2. **JUSTIFIED_REVERSAL:** Replace a weak assumption with a principled opposite only when the reversal improves the result.
+3. **ESTABLISHED_DISSENT:** Apply a demonstrated method distinct from the familiar package and its direct reversal.
+4. **INEVITABLE_SURPRISE:** Apply an initially unexpected, demonstrably transferable approach whose consequences make it unusually fitting.
 
-This constitution governs decision-making, not a universal visual style.
+Every eligible stance is grounded in **Person | Core | Magnum Opus**: one or more real practitioners with demonstrable expertise in the relevant interface, product, interaction, visual, or digital craft; observable principles that govern decisions; and identifiable representative work. Cross-disciplinary transfer must operate in the actual medium. Use complementary amalgams freely when they improve the direction, assigning responsibilities and a conflict rule. Never invent attribution, impersonate a practitioner, or borrow prestige in place of principles.
 
-**Design slop is a pattern of consequential choices controlled by habitual, weakly grounded perspectives rather than the product's evidenced needs.**
+Judge candidates by **informational/functional signal** (truth, legibility, relationships, navigation, task completion, states, accessibility, reliability), **aesthetic/experiential signal** (coherent identity, hierarchy, typography, imagery, rhythm, material, motion, atmosphere, and intended emotion), and **avoidable noise** (attention or complexity with no distinct contribution to either). Neither minimalism, brevity, novelty, nor ornament is an objective. Test specificity to the brief, consequences for users, counterfactual fit to another product, feasibility, and continuity with the approved project design.
 
-It can be ornate or bare, familiar or eccentric, polished or rough. A single familiar device is not proof of slop or AI authorship.
+Select the strongest fitting direction internally and execute it. Apply **REMOVE / MERGE / ELEVATE**: remove functionless elements, merge duplicated jobs, and elevate necessary but generic or underdeveloped ones. Revise governing decisions when the vetoed package returns or the result loses signal. Do not show four mandatory choices or add an approval gate unless the authorized output requires one.
 
-The perspectives below are diagnostic failure models, not mandatory exclusions for every task. Evaluate which are plausible defaults here, then place the mismatched ones in the task-local exclusion set.
+**Missing-baseline boundary:** An empty `DEFAULT_STYLE` is not a completed calibration. For a new discretionary direction, use the validated record it supplies or wait for calibration; never infer a baseline. Exact fixes and scoped changes under an already approved direction may proceed without new calibration.
 
-Their useful methods remain available when independently justified. Their unexamined governing assumptions do not.
+END_MAX_TASTE
 
-### Article I — Evidence outranks category resemblance
+## LAWS
 
-**Slop perspective: Category-template optimizer**
+These are universal decision laws, **not a prescribed visual style**. Apply them in proportion to the product, medium, and scope; a public landing page and a dense working tool may realize the same law differently.
 
-Assumes that looking like a recognized product category is equivalent to solving the product's problem.
+1. **Let the product generate the idea.** Derive consequential identity and composition from real attributes of the subject: its content, objects, actions, language, constraints, context, and purpose. A strong design decision should change if these facts change. Use a distinctive motif, demonstration, or spatial concept only when it carries the subject or improves the experience; do not manufacture a gimmick to satisfy a distinctiveness quota.
 
-**Typical decisions:** Starts from a standard page skeleton, then fits the content into its slots.
+2. **Let questions, claims, and actions generate structure.** Every major screen, section, and component should answer a real user question, establish a supported claim, expose a relationship, or enable a meaningful action. Organize from the user's job and evidence, not the data schema or a predetermined page skeleton. The first encounter should make the product and next useful step intelligible in the form this audience needs; a marketing hero is optional, not universal.
 
-**Common errors:** Irrelevant sections, generic first encounters, duplicated summaries, misplaced primary actions, and an interface whose identity survives unchanged when the subject is replaced.
+3. **Maximize both forms of signal.** Preserve facts, mechanisms, necessary complexity, affordances, and reliable operation while fully developing appropriate atmosphere, identity, perception, rhythm, and delight. Aesthetic treatment can contribute genuine experiential meaning without encoding another fact. Neither an empty clean wireframe nor ornamental spectacle qualifies as a finished design by itself.
 
-**Constitutional correction:** Derive the hierarchy from this audience's job and this product's real content. Preserve conventions for comprehension, not as substitutes for analysis.
+4. **Make composition express relationships.** Allocate focal emphasis according to the importance of information and actions. Use scale, position, grouping, alignment, contrast, repetition, sequence, and negative space to show what belongs together, what differs, and what comes next. Make necessary components feel deliberately designed; vary prominence where meanings differ and repeat grammar where roles repeat. Empty space has a compositional job, not immunity from scrutiny.
 
-### Article II — Mechanisms outrank borrowed prestige
+5. **Art-direct the complete experience.** Make typography, palette, surfaces, geometry, imagery, density, responsive transformations, and motion parts of one coherent language. Carry the governing idea across subsequent views and states rather than spending all the design on a first-screen spectacle. Rich illustration, texture, layered detail, dramatic scale, or restrained quietness are equally eligible when earned by the brief.
 
-**Slop perspective: Prestige-style imitator**
+6. **Make typography and copy do real work.** Treat type as both information architecture and expressive material: choose legible roles, measures, scale, rhythm, and emphasis for actual content and reading conditions. Write recognizable actions, concrete claims, useful explanations, and recoverable errors in the user's vocabulary. Retain necessary nuance, tone, and length; every line should add information, orientation, confidence, or a deliberate experiential effect.
 
-Assumes that borrowing a respected designer's visible manner will transfer the quality of their work.
+7. **Show truthful, specific evidence.** Prefer actual product output, data, imagery, material, interface behavior, and defensible proof. Give every image, illustration, chart, icon, or effect a meaningful role; distinguish conceptual art from factual depiction and verify source rights as relevant. When an interactive demonstration materially explains the product, make it a genuine usable part of the experience, not a decorative simulation.
 
-**Typical decisions:** Copies surface signatures without the original operating conditions or decision principles.
+8. **Design use over time, not just a frame.** Treat loading, error, empty, partial, permission-restricted, destructive, interrupted, and completed states as design. Make primary actions discoverable and operable, feedback specific, transitions intelligible, and recovery possible. Adapt information density, layout, navigation, focus, contrast, zoom, reduced motion, and input behavior to real devices and tasks, including expert workflows that benefit from density.
 
-**Common errors:** Decorative attribution, inaccessible imitation, references that disagree with the product, and a rationale stronger than the interface.
+9. **Build a coherent system, not an inventory.** Reuse the smallest set of tokens, components, and patterns that preserves consistent behavior and identity. Let variation follow meaning or an approved expressive principle, not a desire for token variety. Keep underlying contracts intact and implement real interactions, state, accessibility, performance, and maintainable code within the existing stack.
 
-**Constitutional correction:** Transfer the Core, not the costume. Removing the person's name should leave the decisions intact; removing the Core should weaken them.
+10. **Inspect the artifact people actually receive.** Evaluate the rendered interface across relevant widths, content amounts, states, and tasks; inspect screenshots and interactions, not just source code or reference boards. Repair underlying decisions when something reads as generic, empty, confusing, or broken. Document exact implemented rules and observed checks, separating intentions, completed work, and unverified claims.
 
-### Article III — Structure must encode real relationships
+For every consequential choice ask: **What specific evidence warrants it? What does it change for the user? What relationship or feeling does it express? Would it still be appropriate for a different product? Does it survive real implementation?**
 
-**Slop perspective: Component-inventory composer**
+END_LAWS
 
-Assumes that a complete-looking assortment of UI components creates a complete experience.
+## NOISE_VETO
 
-**Typical decisions:** Divides unlike information into uniform units and adds structural devices to make the page appear organized.
+Each DON'T is a veto on an unsupported **decision mechanism**, followed by the required alternative. These rules do not globally prohibit individual visual techniques.
 
-**Common errors:** False equivalence, arbitrary sequencing, redundant containers, flattened hierarchy, and unnecessary navigation.
+1. **DON'T** force content into a stock hero/features/testimonials/pricing sequence or a dashboard template; **derive sections and hierarchy from the product's real questions, claims, data, and actions instead.**
+2. **DON'T** transfer a famous designer's look, an award-site fashion, or a reference collage as authority; **transfer operational principles with valid conditions, distinct responsibilities, and a governing conflict rule instead.**
+3. **DON'T** simulate polish with gratuitous cards, pill tags, icon circles, floating shapes, generic grids, gradient blobs, ornamental dividers, or uniform component tiles; **use each device only where it organizes meaning or earns a specific experiential role instead.**
+4. **DON'T** give unlike elements equal prominence or repeat a composition until the page becomes interchangeable; **allocate attention by importance and carry a coherent but responsive art direction across the whole experience instead.**
+5. **DON'T** expose database entities, internal implementation steps, or technical jargon as the user's navigation model without a task reason; **translate real system behavior into meaningful user objects, actions, and states instead.**
+6. **DON'T** optimize a single idealized screenshot while ignoring real workflows, variable data, narrow viewports, focus, errors, and access limits; **design and inspect the working interface across its consequential conditions instead.**
+7. **DON'T** equate more animation, contrast, effects, or simultaneous focal points with higher craft; **use controlled intensity, coherent material treatment, and motion with a functional or expressive purpose instead.**
+8. **DON'T** erase useful labels, proof, explanations, content density, or atmosphere to appear minimalist or anti-slop; **remove only what contributes to neither form of signal and elevate the necessary material instead.**
+9. **DON'T** impose unusual navigation, asymmetric composition, or contrarian visuals just to escape familiarity; **justify the learning cost and preserve established conventions when they best serve users instead.**
+10. **DON'T** use generic stock visuals, generated imagery, elaborate surfaces, or ornamental motion to hide unresolved structure; **solve the hierarchy and interaction first, then choose truthful assets that reinforce the subject and experience instead.**
+11. **DON'T** pad the interface with redundant subtitles, self-evident helper text, repeated headings, empty slogans, buzzwords, invented metrics, fabricated endorsements, or fake controls; **make each line and affordance informative, intentional, and supported by real content or capability instead.**
+12. **DON'T** mistake speculative tokens, architecture, references, documentation, passing static checks, or confident completion reports for a working product; **implement the authorized behavior, inspect it, run relevant regression, and document only what is actually known instead.**
 
-**Constitutional correction:** Let grouping, sequence, repetition, spacing, and emphasis explain actual relationships. Use the natural number and arrangement of parts.
+A card, gradient, illustration, grid, divider, long passage, quiet background, or dramatic transition is valid when its contribution survives these tests. Veto the **unjustified governing package**, not the device's mere presence. Correct causes before cosmetic symptoms.
 
-### Article IV — Data structure is not automatically user structure
+END_NOISE_VETO
 
-**Slop perspective: Backend-mirror operator**
+## DEFAULT_STYLE
 
-Assumes that internal entities and implementation boundaries should determine the user's mental model.
+This section is empty in the package because the default depends on the root model: the model that makes the final taste-bearing decisions, even when other models assist it. Read it from the `agentic/default-styles.md` entry for the root model and frontend design, and apply it as the governing package to veto, never as a recipe or as a ban on individual conventions that the brief independently justifies.
 
-**Typical decisions:** Exposes fields, system stages, configuration concepts, and internal terminology directly.
+- An entry with a distilled `DEFAULT_STYLE`: use it verbatim as this section.
+- An entry marked `uncalibrated`: before new discretionary direction, name, as concrete decisions rather than adjectives, the governing package you would otherwise reach for in frontend design, veto it as a package, and label it an unreliable self-report that a calibration should replace.
+- No entry: the default has not been filled. Do not invent one or present a predicted self-description as measured behavior; new discretionary direction waits for calibration, while exact corrections and work under an approved direction proceed without it.
 
-**Common errors:** Technically complete but cognitively expensive flows, normal-path debug clutter, unclear actions, and navigation organized around storage rather than work.
+END_DEFAULT_STYLE
 
-**Constitutional correction:** Preserve contracts while translating them into user goals, meaningful objects, and recognizable states. Expose technical detail when the audience needs it.
+## DIRECTION_PLAN_AND_STYLE_MODE
 
-### Article V — Appearance must not outrank use over time
+Before major implementation, define product outcome, chosen stance/Person/Core/work, constraints, vetoed default package, subject-specific organizing idea when warranted, first encounter and progression, content claims or user questions, navigation, density, typography, palette, surface language, layout grammar, interaction and motion, accessibility, reference strategy, omissions, and quality thresholds. Compare materially different layouts when information architecture is unresolved; do not let an assigned visual style decide which content deserves to exist.
 
-**Slop perspective: Screenshot optimizer**
+Choose **code-only** style where code-native layout, type, geometry, color, CSS/SVG/canvas, and interaction carry the identity, or **code-plus-assets** when bespoke imagery/media materially improves meaning, recognition, atmosphere, navigation, or gameplay. Assets cannot replace missing functionality or a weak structure. Record the mode and roles.
 
-Assumes that one attractive static composition demonstrates interface quality.
+Define the smallest adequate tokens and primitives, including semantic state colors and accessibility requirements where relevant. Decide type roles and measure, responsive priorities, spacing ownership, and focus/state grammar. Preserve approved project decisions unless an authorized change demands otherwise. For major work, give a compact rationale only when requested or materially useful; do not turn internal comparison into another approval gate.
 
-**Typical decisions:** Designs the populated ideal state at one viewport and treats everything else as later adaptation.
-
-**Common errors:** Broken overflow, absent recovery paths, inaccessible controls, weak mobile behavior, misleading affordances, and loading states that destroy orientation.
-
-**Constitutional correction:** Design transitions, time, uncertainty, input, interruption, and content variation—not only a still image.
-
-### Article VI — Emphasis is an allocation, not an accumulation
-
-**Slop perspective: Attention maximizer**
-
-Assumes that more visual intensity, motion, and emphasis make a product more engaging.
-
-**Typical decisions:** Gives many elements simultaneous prominence and uses effects without a causal relationship to user action or meaning.
-
-**Common errors:** Competing focal points, sensory fatigue, unstable hierarchy, unreadable density, and decorative motion that conceals state.
-
-**Constitutional correction:** Allocate attention according to the intended experience. Use one dominant move when appropriate, but allow distributed emphasis when the work genuinely requires parallel monitoring.
-
-### Article VII — Restraint must not erase necessary meaning
-
-**Slop perspective: Purity-by-subtraction minimalist**
-
-Assumes that reducing visible content and controls always improves taste.
-
-**Typical decisions:** Removes labels, context, affordances, distinctions, or useful density to preserve visual calm.
-
-**Common errors:** Ambiguous controls, hidden functionality, excessive navigation, inefficient expert workflows, and austerity mistaken for clarity.
-
-**Constitutional correction:** Remove what does not serve the brief. Keep the context, atmosphere, guidance, and density the audience needs. Minimalism is an eligible aesthetic, not a universal law.
-
-### Article VIII — Novelty must earn its learning cost
-
-**Slop perspective: Anti-default contrarian**
-
-Assumes that reversing familiar choices or selecting unusual references produces distinction.
-
-**Typical decisions:** Rejects conventions because they are common and introduces surprising composition or interaction without an audience benefit.
-
-**Common errors:** Arbitrary novelty, weak discoverability, performative difficulty, and another repeatable “anti-slop” look.
-
-**Constitutional correction:** Require evidence of improved fit. Preserve learned behavior unless the benefit of change justifies its cost.
-
-### Article IX — Coherence requires jurisdiction
-
-**Slop perspective: Reference-collage amalgam**
-
-Assumes that combining several admired directions produces a richer result.
-
-**Typical decisions:** Assigns overlapping authority to references or combines their surface features without conflict resolution.
-
-**Common errors:** Competing type voices, inconsistent density, mismatched interaction expectations, token drift, and pages that feel like separate products.
-
-**Constitutional correction:** Use the smallest useful amalgam, distinct responsibilities, and an explicit conflict rule. Introduce variation because the meaning changes, not because another reference is available.
-
-### Article X — Concrete substance outranks performed completeness
-
-**Slop perspective: Plausibility-and-polish simulator**
-
-Assumes that credible-looking content and reassuring UI signals can stand in for actual product substance.
-
-**Typical decisions:** Adds unsupported claims, invented proof, generic explanatory copy, or controls that imply unavailable behavior.
-
-**Common errors:** Fake metrics, ungrounded endorsements, dead actions, vague errors, decorative copy, and mock data left in production paths.
-
-**Constitutional correction:** Use real content and behavior. Mark provisional material where reliance matters. Every action must work or communicate its actual availability.
-
-### Article XI — Expression must answer to purpose
-
-**Slop perspective: Asset-and-effect compensator**
-
-Assumes that imagery, texture, animation, or visual richness can rescue an unresolved experience.
-
-**Typical decisions:** Adds expressive material before settling hierarchy and interaction.
-
-**Common errors:** Beautiful irrelevance, obstructed content, unnecessary performance cost, inaccessible imagery, and assets with no defined role.
-
-**Constitutional correction:** Give each asset or effect a job in comprehension, identity, atmosphere, recognition, navigation, or gameplay. Evaluate its contribution in the implemented interface.
-
-### Article XII — Documentation must describe reality
-
-**Slop perspective: Ceremony-first systemizer**
-
-Assumes that extensive tokens, principles, diagrams, and confident validation language demonstrate a mature design system.
-
-**Typical decisions:** Documents ambitions as implementation, creates unused abstractions, or treats process completion as product quality.
-
-**Common errors:** Stale guides, redundant primitives, invented test claims, and a “complete” workflow around an incomplete interface.
-
-**Constitutional correction:** Keep the system proportionate. Document actual behavior and exact implemented rules. Distinguish intended, implemented, inspected, and verified.
-
-### Universal decision tests
-
-Apply these tests to consequential discretionary choices:
-
-1. **Specificity:** Which fact about this brief supports the choice?
-2. **Consequence:** What does it improve for the audience or outcome?
-3. **Counterfactual:** If the subject, audience, or primary job changed, should this choice change?
-4. **Purpose:** What work does this element perform?
-5. **Relationship:** What information does its placement or treatment encode?
-6. **Coherence:** Does it follow the same rules as other elements with the same role?
-7. **Reality:** Does it survive actual content, behavior, and constraints?
-
-A choice that stays unchanged across unrelated briefs needs a functional justification. Shared controls and accessibility conventions often have one; discretionary identity needs stronger grounding.
-
-When a choice fails, revise the governing decision. Do not merely replace its color, font, shape, or reference name.
-
-END_UNIVERSAL_UNSLOP_DESIGN_CONSTITUTION
-
-## DIRECTION_PLAN_AND_PUBLIC_DIAGNOSTIC
-
-Before substantive implementation, create a compact direction plan connecting:
-- Intended outcome and taste-bearing choices.
-- Likely defaults and task-local exclusions.
-- Selected stance, Person, Core, and representative work.
-- Consequential choices governed by that Core.
-- First encounter and subsequent user progression.
-- Information hierarchy, navigation, and density.
-- Token system, type roles, layout grammar, and interaction rules.
-- Design language mode and image-generation plan.
-- Important omissions, tradeoffs, and quality thresholds.
-- Acceptance checks.
-
-Use a short comparison of plausible layouts when layout is unresolved. Prose and small ASCII wireframes are sufficient.
-
-Define:
-- A compact semantic palette; four to six foundational colors are often enough, with additional state roles as needed.
-- Typefaces, role assignments, scale, measure, and spacing.
-- Layout, alignment, responsive transformations, and content priorities.
-- The signature choice, if the brief benefits from one.
-- State and motion principles.
-
-Do not invent token variety to make a board look comprehensive.
-
-Review the plan against the brief before building. If changing the product name would leave the direction essentially unchanged, inspect which choices are generic and whether they have functional justification.
-
-When the output contract permits, provide one compact public decision diagnostic before substantive work. Summarize the selected stance and perspective, default exclusion, decisive fit, and material tradeoff.
-
-Include an anticipated correction only when evidence supports it. Present a decision rationale, not private scratchwork or an exhaustive candidate roster.
-
-Use a progress channel when available. Omit the diagnostic if it would violate an exact output contract.
-
-END_DIRECTION_PLAN_AND_PUBLIC_DIAGNOSTIC
+END_DIRECTION_PLAN_AND_STYLE_MODE
 
 ## FRONTEND_CRAFT
 
-Use frontend craft to execute the selected perspective, not to replace it.
+**First encounter:** Reveal what this product is, its most consequential content or current state, and the next useful action in the form appropriate to its users. A working application need not begin with a promotional hero. A public page should give users its actual proposition, evidence, or reason to explore, not a generic headline wrapped around a decorative screenshot.
 
-### First encounter
+**Typography:** Choose type for language, identity, task, density, reading conditions, and performance. Use deliberately differentiated roles and readable measures. Let text scale, line breaking, and rhythm serve the content, while respecting zoom and localization. Expressive type is craft when it clarifies meaning or develops identity.
 
-Show the most characteristic and useful thing for this product in the appropriate form: content, tool, status, image, explanation, demonstration, or interaction.
+**Composition and art direction:** Use grouping, alignment, scale, color relationships, spacing, surfaces, imagery, and focal points to expose real relationships. Preserve necessary density without making every area equally loud. Carry the accepted visual idea across the experience without forcing each view into identical geometry. Treat negative space, texture, illustration, and material as intentional compositional resources, not default additions or removals.
 
-A working application may need immediate access to work rather than a promotional opening. Do not assume every frontend needs a hero.
+**Interaction and motion:** Keep actions clear, visible, keyboard-operable, and recoverable. Design useful affordances, feedback, state transitions, and appropriate motion, with reduced-motion support. Preserve modal focus, scroll ownership, and layout stability. A live demonstration is valuable when it performs or verifies something real.
 
-### Typography
+**Copy:** Use canonical user-facing terminology, precise action verbs, specific claims, meaningful errors and recovery guidance, and useful empty states. Remove ornamental subtitles, redundant headings, false urgency, generic preambles, and filler. Do not flatten expressive language or necessary explanation into clipped fragments; voice, pacing, and appropriate length remain craft choices.
 
-Choose type through content, audience, reading conditions, language coverage, identity, and performance.
-
-Use a coherent scale with deliberate weights, widths, spacing, and role distinctions. One or two families often suffice; additional families need a clear role.
-
-Use readable measures. Body text generally benefits from lines below roughly 80 characters, adjusted for script, typeface, task, and viewport. Tune line height to the actual face and reading conditions.
-
-Treat expressive typography as part of hierarchy, not automatic embellishment. Labels and emphasis must explain something.
-
-### Structure and consistency
-
-Make borders, surfaces, grouping, numbering, and spatial divisions encode meaning.
-
-Repeat patterns when their role repeats. Distinguish elements when their meaning differs. Do not enforce visual uniformity at the expense of semantic hierarchy.
-
-### Motion
-
-Use motion to explain change, continuity, causality, focus, or an evidenced expressive goal.
-
-Prefer coherent choreography over unrelated effects. Non-user-triggered motion must earn attention and respect reduced-motion preferences.
-
-### Interface copy
-
-Write from the user's side of the screen:
-- Use recognizable terms and specific verbs.
-- Name actions by what they do.
-- Keep action names consistent throughout the flow.
-- Match tone to the audience and product.
-- Explain failures and recovery.
-- Make empty states useful.
-- Preserve necessary domain language without leaking irrelevant internals.
-
-Do not impose a universal prohibition on warmth, apology, complexity, or expressive language. Judge whether it helps this user in this context.
-
-### Engineering and accessibility floor
-
-Preserve semantic structure, keyboard access, visible focus, accessible names, usable contrast, readable content, appropriate target sizes, reduced-motion support, and correct modal behavior.
-
-Use coherent CSS layering and selector specificity. Avoid competing spacing ownership and patches that conceal a broken layout model.
-
-Design for real content length, localization where relevant, sparse and dense data, narrow viewports, zoom, scrolling, and asynchronous updates.
+**Engineering:** Preserve semantic HTML, accessible names, visible focus, usable contrast/targets, keyboard order, responsive scrolling, performance, validation, security, and accurate state. Design for actual long, short, sparse, dense, localized, interrupted, and asynchronous content. Use coherent CSS ownership and the existing stack; avoid speculative abstractions or cosmetic patches that conceal a broken layout model.
 
 END_FRONTEND_CRAFT
 
-## DESIGN_LANGUAGE_MODE
+## VISUAL_REFERENCES_AND_ASSETS
 
-Choose the implementation mode from product need, not a habitual preference.
+For a **full new design direction**, generate **exactly three initial references** before substantial implementation if image generation is available:
 
-**Code-only design language:** Persistent UI identity is implemented through code-native layout, typography, color, geometry, SVG, canvas, CSS, and interaction.
+1. `agentic/design/references/design-style.png`, visibly titled **Design Style Guide**. Show the relevant product-specific palette, typography, spatial and material language, imagery, emphasis, and atmosphere.
+2. `agentic/design/references/design-system.png`, visibly titled **Design System Guide**. Show the navigation, actual content structures, meaningful component roles, important states, and responsive/accessibility intentions.
+3. `agentic/design/references/representative-view.png`, visibly titled **Representative Interface View**. Show a consequential real view with credible content, primary job, hierarchy, plausible density, and coherent application of the first two references.
 
-**Code-plus-assets design language:** Persistent bespoke imagery or other assets carry meaning that code-native UI cannot efficiently provide.
+These are product-specific design instruments, not generic moodboards or proof of functionality. Put required visible titles outside the depicted UI where appropriate. Exactly three **initial** images permits later focused revisions; scoped changes need not regenerate them.
 
-Use assets when they improve comprehension, identity, recognition, atmosphere, navigation, onboarding, or gameplay. Do not use them as compensation for weak structure.
+Every image prompt should convey product, audience, actual tasks and content, chosen Core as visible operational decisions, style mode, important states and layout constraints, default-package exclusions, accessibility/feasibility goals, exact title, destination, and what the reference must demonstrate. Carry accepted grammar forward through reference conditioning when possible; otherwise repeat it explicitly. Inspect the three together for coherent hierarchy and product-specific content. Do not treat generated artifacts or fabricated-looking text as implementation specifications.
 
-Code-only does not mean skipping image generation. Reference images are design instruments even when the shipped interface contains no generated raster assets.
+For production assets, define intended role, license or authorization as relevant, safe crops, dimensions, format, transparency, responsive use, performance, and fallback. Keep critical labels and controls in UI code. Stage assets under `agentic/design/assets/`, select one canonical runtime destination, check actual properties and loading, and remove duplicates only after verification. If generation is unavailable, disclose it, preserve usable prompts where possible, and proceed within an honestly provisional scope; never claim reference files exist when they do not.
 
-Record the selected mode, reasons, and asset roles in the direction plan and final `DESIGN.md`.
-
-END_DESIGN_LANGUAGE_MODE
-
-## REFERENCE_IMAGES
-
-For a full new design direction, create exactly three initial reference images before substantial frontend implementation:
-
-1. `agentic/design/references/design-style.png`
-   Visible title: **Design Style Guide**
-
-2. `agentic/design/references/design-system.png`
-   Visible title: **Design System Guide**
-
-3. `agentic/design/references/representative-view.png`
-   Visible title: **Representative Interface View**
-
-These are product-specific design instruments, not generic moodboards. Iterate them when they reveal contradictions or weak fit; exactly three initial images does not prohibit revisions or later targeted studies.
-
-### Design Style Guide
-
-Communicate the product's visual world:
-- Palette and contrast relationships.
-- Typography roles and personality.
-- Geometry, surfaces, material cues, and image treatment.
-- Density, atmosphere, and emphasis.
-- The justified signature choice, where applicable.
-
-Show only dimensions relevant to the direction. A product does not need texture, lighting effects, or elaborate imagery merely because a style board can display them.
-
-### Design System Guide
-
-Communicate the reusable grammar needed by this product:
-- Layout and navigation.
-- Relevant controls and content structures.
-- Meaningful component differences.
-- Important interaction and feedback states.
-- Responsive intentions and accessibility affordances.
-
-Do not fill the board with every possible component. Select the structures and states that establish the system's hardest or most repeated decisions.
-
-### Representative Interface View
-
-Show the first or most consequential real interface view with realistic content.
-
-Demonstrate:
-- The primary user job.
-- Clear action hierarchy.
-- Domain-specific information relationships.
-- Plausible density.
-- Meaningful state visibility.
-- Coherent application of the other two guides.
-
-Place the exact reference title in an annotation area if it does not belong in the product UI. Do not ship that annotation as interface content.
-
-### Review requirements
-
-Inspect all three references together for:
-- Fit to the selected perspective's Core.
-- Reappearance of excluded decision packages.
-- Consistency of type, color roles, geometry, density, and hierarchy.
-- Realistic content and feasible layout.
-- Whether the representative view actually explains use.
-
-Generated text and geometry may be imperfect. Do not treat image-model artifacts as design requirements. Images cannot validate keyboard behavior, semantics, responsive transitions, or computed contrast.
-
-If generation is unavailable, disclose the limitation, save usable prompts, and continue only within an explicitly stated provisional scope. Do not claim the references exist or that the full image-supported workflow is complete.
-
-END_REFERENCE_IMAGES
-
-## IMAGE_PROMPT_MECHANISM
-
-Each reference prompt must specify:
-- Exact visible title.
-- Product, audience, and usage context.
-- Primary content and workflow.
-- Selected design language mode.
-- Selected perspective's operational principles in plain language.
-- Intended experience, hierarchy, and density.
-- What this particular image must demonstrate.
-- Realistic content and important states.
-- Accessibility and implementation-feasibility expectations.
-- Task-local excluded perspectives and their failure mechanisms.
-- Output format and intended destination.
-
-Translate the Core into visible relationships. Naming a designer without those instructions is insufficient.
-
-Replace surface blacklists with decision-level exclusions. Tell the image model which governing assumptions must not control the result, why they would fail this product, and what evidence-grounded principle should replace them.
-
-Generate the style guide first, then carry its accepted grammar into the system guide and representative view when the tools support reference conditioning. Otherwise repeat the decisive specifications explicitly.
-
-For production assets, specify:
-- Product purpose and asset role.
-- Relationship to the accepted reference system.
-- Composition and safe crop regions.
-- Required dimensions and delivered format.
-- Transparency or background behavior.
-- Intended display size and responsive use.
-- Performance constraints and fallback.
-- Whether the asset is informative or decorative.
-
-Stage generated assets under `agentic/design/assets/`; during integration choose one canonical runtime location in the application and record it in DESIGN.md. Move or reference assets coherently, verify runtime use, and remove staging duplicates only after validation. Verify actual dimensions, transparency, and file format rather than assuming the generator fulfilled the request.
-
-Keep critical labels and interactive text in accessible UI code rather than baking them into images.
-
-END_IMAGE_PROMPT_MECHANISM
+END_VISUAL_REFERENCES_AND_ASSETS
 
 ## DIRECT_IMPLEMENTATION
 
-Implement the real frontend in the repository using the reviewed direction and references.
+Implement in the actual repository. Reuse or introduce the smallest necessary tokens and primitives; build the representative view with real or honestly identified provisional content; connect state, routes, APIs, permissions, forms, persistence, and error handling; extend the chosen grammar through required views and states; and add assets only when justified.
 
-1. Establish or reuse the smallest adequate token system.
-2. Build layout primitives and the components required by actual flows.
-3. Implement the representative view with realistic content.
-4. Connect real state, routing, persistence, permissions, and backend behavior.
-5. Extend the same grammar across required views and states.
-6. Add generated production assets where the selected mode requires them.
-7. Inspect the running result and repair supported mismatches.
-8. Update the direction only when evidence justifies it.
+Do not substitute a disconnected prototype for the requested app. Keep fixtures identifiable and out of production paths unless an explicit prototype is the deliverable. Preserve required contracts while updating dependent code and tests coherently when structure changes. When a reference cannot be implemented faithfully, preserve the governing principle and document the justified departure rather than copying an infeasible picture.
 
-Do not create a disconnected prototype when the requested deliverable is the real app.
-
-Temporary fixtures can help development, but keep them distinguishable and out of production paths unless the deliverable is explicitly a prototype.
-
-Codex may author missing components, revise layouts, generate additional assets, and repair both design and engineering problems directly. There is no external-author approval boundary.
-
-Preserve required behavior and integrations. Do not freeze incidental legacy selectors or structure when they can be safely changed within scope; update dependent code and tests coherently.
-
-When implementation requires a departure from a reference, preserve the governing principle rather than copying an infeasible picture. Record consequential departures and why they improved correctness, usability, accessibility, or feasibility.
+Implement directly with available tools. Revise layout, components, assets, and references when evidence warrants it, without redundant approval gates inside authorized scope.
 
 END_DIRECT_IMPLEMENTATION
 
 ## CRITIQUE_AND_REGRESSION
 
-Inspect the product as an experience, not only as source code.
+Inspect the **running product** when tools permit, not just source or a polished still. Review consequential viewport sizes and content densities; loading/empty/error/success/partial states; permissions and destructive actions; keyboard/focus/semantics; contrast, zoom, reduced motion, overlays, long content, localization as relevant; network or console errors; assets; and primary/secondary/debug flows.
 
-When available, run the app and review rendered screenshots at representative viewport sizes. Check real states and interactions; a screenshot alone does not establish behavioral quality.
+Critique at three levels: **perspective** (did the selected Core govern real decisions, or did the familiar governing package return?); **composition** (do hierarchy, type, grouping, content, imagery, and atmosphere serve this product without avoidable noise?); **operation** (can people accomplish their work under realistic constraints?). Check both excess and absence: a sterile but readable screen can be as under-designed as an ornate but unusable one. Repair causal design decisions before surface edits.
 
-Critique at three levels:
-
-**Perspective:** Did the selected Core materially govern decisions, or did the excluded default return?
-
-**Composition:** Does hierarchy, density, type, grouping, imagery, and motion explain this product's content and intended experience?
-
-**Operation:** Can users complete the required work across realistic states and constraints?
-
-Inspect, as applicable:
-- App load, navigation, deep links, and permission boundaries.
-- Real backend calls and persistence.
-- Primary and secondary flows.
-- Form validation and recovery.
-- Empty, loading, partial, error, success, and destructive states.
-- Advanced, admin, and debug access.
-- Keyboard order, focus visibility, names, and semantics.
-- Contrast, readability, zoom, and reduced motion.
-- Mobile layouts, overflow, long content, and scroll ownership.
-- Fixed elements, dialogs, drawers, and overlays.
-- Asset loading, missing-asset fallbacks, and performance.
-- Console and network errors.
-- Dead controls, misleading affordances, and leftover mock content.
-
-Anticipate corrections supported by the brief: wrong emphasis, missing states, weak task fit, decorative perspective use, excessive complexity, or incomplete behavior. Do not invent user preferences.
-
-Repair the responsible decision rather than accumulating cosmetic patches.
-
-Define one bounded final regression block covering the agreed critical flows and relevant changed surfaces. Run it after the final changes. If it fails, repair the failures and rerun the same complete block before claiming it passes.
-
-Distinguish:
-- Planned checks.
-- Checks actually run.
-- Observed failures.
-- Applied repairs.
-- Verified improvements.
-- Unverified areas and blockers.
-
-If tools or services prevent validation, hand over useful completed work with exact limitations. Do not certify an unobserved result.
+Run a bounded final regression block covering changed surfaces and agreed critical flows. If it fails, repair and rerun the same complete block before claiming a pass. Distinguish planned checks, executed checks, observed failures, repairs, verified outcomes, and unknowns. Never invent screenshots, test passes, observed behavior, or user feedback.
 
 END_CRITIQUE_AND_REGRESSION
 
 ## FINAL_DESIGN_MD
 
-Finalize `agentic/design/DESIGN.md` after implementation and the real regression block.
+Create or update `agentic/design/DESIGN.md` **after** implementation and observed validation. Preserve approved decisions that remain applicable. Document the actual audience, primary job, experience, governing perspective and its Core (or inherited direction), product-specific principles, justified conventions, relevant exclusions, and conditions that warrant revisiting the direction. This guide describes the **approved, implemented product design**, not the general model `DEFAULT_STYLE` or the search process.
 
-The guide must describe the working result, not the initial ambition. Working notes may exist earlier, but do not present them as a verified final design system.
+Record actual frontend architecture, rendering boundaries, data/state flows, routes and contracts, persistence and permissions, precise token names and values, typography, layout/spacing/responsive rules, components and variants, navigation, forms, interaction states, modal focus, motion and reduced-motion behavior, copy patterns, accessibility limitations, assets and their paths, and run/test commands. Include the three reference images as historical intent, consequential departures from them, observed regression results, and known gaps.
 
-If completion is blocked, a provisional guide may preserve useful work. Mark it explicitly as provisional and distinguish implemented, verified, and unresolved sections.
-
-Make the guide detailed enough for future Codex work to extend the product without returning to generic defaults. Match its depth to the project's complexity.
-
-### Product and taste foundations
-
-Document:
-- Audience, primary job, and intended experience.
-- Fixed constraints and important assumptions.
-- Selected stance, Person, Core, and representative work.
-- Transfer conditions and relevant limitations.
-- Task-local excluded perspectives and their failure mechanisms.
-- Consequential choices governed by the Core.
-- Tradeoffs, justified conventions, and what future changes should preserve.
-- Evidence that would justify revisiting the direction.
-
-### Code fundamentals
-
-Document the actual:
-- Frontend structure and rendering boundaries.
-- State ownership and data flow.
-- Routing and backend integration points.
-- Event wiring, persistence, permissions, and important contracts.
-- Asset loading and test hooks.
-- Extension points and dependency assumptions.
-
-### Design system fundamentals
-
-Document exact implemented:
-- Token names, values, variables, and semantic roles.
-- Typography settings and font-loading behavior.
-- Layout primitives, spacing, alignment, and responsive rules.
-- Component responsibilities and variant rules.
-- Navigation, forms, data presentation, and status patterns.
-- Modal, drawer, overlay, and focus behavior.
-- Motion and reduced-motion behavior.
-- Accessibility conventions and known limitations.
-
-### Design style fundamentals
-
-Document the implemented:
-- Palette behavior and emphasis.
-- Type personality and reading conditions.
-- Geometry, surfaces, borders, shadows, and imagery.
-- Density, affordances, icon treatment, and expressive rules.
-- Code-only or code-plus-assets mode and its evolution.
-- Signature choices and the conditions under which they remain useful.
-
-### States and flows
-
-Document required states, how they appear, what users can do, and which files or components implement them.
-
-Include recovery paths, destructive-action safeguards, and advanced or debug treatment where relevant.
-
-### References, assets, and validation
-
-Include:
-- The three reference images as historical visual intent.
-- Generated production assets, roles, paths, and usage rules.
-- Consequential departures from references.
-- Run and test commands.
-- The final regression block and observed results.
-- Known issues and unverified behavior.
-
-Preserve exact names and values wherever paraphrase would weaken fidelity. Do not dump entire source files or fabricate precision.
+Do not paste raw audits, speculate about tokens, duplicate source files, or describe intended work as verified. If blocked, mark the guide provisional and distinguish implemented, inspected, and unresolved material.
 
 END_FINAL_DESIGN_MD
 
 ## VALIDATION_GATE
 
-Before declaring the full design pass complete, confirm:
+Before final handoff, confirm that:
 
-1. Taste was applied only where discretionary judgment materially affected success.
-2. Product, audience, primary job, scope, and completion criteria were established.
-3. Explicit requirements, factual integrity, accessibility, and required behavior were preserved.
-4. Default detection was an honest behavioral estimate, not a claim of hidden probability access.
-5. The task-local exclusion set preceded alternative selection.
-6. Excluded perspectives did not return through relabeling, surface changes, or amalgams.
-7. The selected Person, Core, and representative work were supportable.
-8. Transfer conditions held, and the stance was chosen through consequential fit rather than novelty.
-9. The Core governed real choices across the interface.
-10. The constitution was applied to decision mechanisms rather than converted into a visual blacklist.
-11. The design plan was reviewed against actual content before substantial implementation.
-12. The three initial reference images exist, carry their required titles, and form a coherent product-specific direction.
-13. The design language mode and production assets were selected for a useful role.
-14. Codex implemented the frontend directly in the real project.
-15. Real data flows, required states, secondary flows, and relevant integrations work.
-16. Responsive behavior, accessibility, content variation, and assets received appropriate inspection.
-17. The final bounded regression block passed after the final changes.
-18. `DESIGN.md` describes the actual implementation with exact details where necessary.
-19. Validation claims match observed checks; material uncertainty remains explicit.
-20. The requested deliverable is usable within its stated boundary.
+1. The product brief, authorized scope, existing stack, and real contracts were respected.
+2. Any established `DESIGN.md` was inspected and its approved direction preserved except where changes were authorized.
+3. An applicable `DEFAULT_STYLE` was supplied for new taste selection; its governing package was vetoed, not used as a recipe or an individual-technique blacklist.
+4. The four MAX_TASTE stances were compared internally for consequential open decisions, with real relevant Person/Core/Magnum Opus grounding.
+5. `LAWS` governed meaningful choices, and `NOISE_VETO` corrected decision mechanisms rather than generating another fixed anti-slop look.
+6. Product-specific evidence, content, user questions, and action priorities determined structure and any organizing design idea.
+7. Informational/functional and aesthetic/experiential signal were both developed without deleting necessary substance or adding unearned decoration.
+8. Typography, composition, imagery, copy, navigation, interactions, states, and responsiveness form a coherent system.
+9. The three initial references and justified assets were created and inspected when supported and required by scope; missing resources were disclosed.
+10. The frontend is integrated into the real project and critical actions have real behavior rather than dead controls or unmarked fixtures.
+11. Accessibility, permissions, real data, content variability, and important workflows received appropriate inspection.
+12. The bounded final regression block actually passed before any passing claim; unverified areas are explicit.
+13. `DESIGN.md` documents implemented reality and observed validation, not aspirational completeness.
 
-For a scoped maintenance task, apply the relevant checks without manufacturing a new design direction or reference-generation requirement.
-
-Repair failed checks within scope. If blocked, report partial completion and the exact dependency. Do not substitute a persuasive rationale, polished screenshot, or extensive guide for a working product.
-
-Stop when the agreed completion criterion and relevant checks are satisfied. Do not continue searching indefinitely for a theoretically more tasteful alternative.
+For maintenance, apply only relevant checks and do not manufacture a new design direction or reference set. If completion or verification is blocked, deliver useful completed work and describe the exact limitation. Stop when the authorized outcome and relevant checks are satisfied.
 
 END_VALIDATION_GATE
+
+End Harness Design.

@@ -1,0 +1,33 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$(git rev-parse --show-toplevel)/.codex/hooks/cheapgpt-turn.mjs\"",
+            "commandWindows": "powershell -NoProfile -Command \"node (Join-Path (git rev-parse --show-toplevel) '.codex/hooks/cheapgpt-turn.mjs')\"",
+            "statusMessage": "cheapgpt:heartbeat",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "^compact$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$(git rev-parse --show-toplevel)/.codex/hooks/cheapgpt-turn.mjs\"",
+            "commandWindows": "powershell -NoProfile -Command \"node (Join-Path (git rev-parse --show-toplevel) '.codex/hooks/cheapgpt-turn.mjs')\"",
+            "statusMessage": "cheapgpt:recovery",
+            "timeout": 15,
+            "additionalContextLimit": 8000
+          }
+        ]
+      }
+    ]
+  },
+  "description": "Project-local Codex hooks."
+}

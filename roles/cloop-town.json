@@ -1,0 +1,198 @@
+{
+  "extension": "cloop",
+  "profile": "town",
+  "source": {
+    "package": "cLoop",
+    "version": "1.2.0",
+    "commit": "585f9c7afe66d53f37c92a221562021883ae1066",
+    "file": "profiles/<profile>.md (ROLES AND INVOCATION)"
+  },
+  "editions": {
+    "codex": {
+      "root": "gpt-6.1-sol medium",
+      "turnLine": "CLOOP town: the council (gpt-6.1-terra max + gpt-6.1-sol medium) drafts apart, judges apart and blind (any reproduced violation blocks) and breaks loops apart; explorers gpt-6.1-terra medium; the root merges by the merge card.",
+      "rows": [
+        {
+          "role": "planner",
+          "model": "gpt-6.1-terra",
+          "effort": "max",
+          "spawn": "spawn_agent",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "planner",
+          "model": "gpt-6.1-sol",
+          "effort": "medium",
+          "spawn": "spawn_agent",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "reviewer",
+          "model": "gpt-6.1-terra",
+          "effort": "max",
+          "spawn": "spawn_agent",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "reviewer",
+          "model": "gpt-6.1-sol",
+          "effort": "medium",
+          "spawn": "spawn_agent",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "loop-breaker",
+          "model": "gpt-6.1-terra",
+          "effort": "max",
+          "spawn": "spawn_agent",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "loop-breaker",
+          "model": "gpt-6.1-sol",
+          "effort": "medium",
+          "spawn": "spawn_agent",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "explorer",
+          "model": "gpt-6.1-terra",
+          "effort": "medium",
+          "spawn": "spawn_agent",
+          "context": "fresh",
+          "claim": "required"
+        }
+      ]
+    },
+    "claude": {
+      "root": "Opus 5.5 medium",
+      "turnLine": "CLOOP town: the council (Sonnet 5.5 xhigh + Opus 5.5 medium) drafts apart, judges apart and blind (any reproduced violation blocks) and breaks loops apart; explorers Sonnet 5.5 medium; the root merges by the merge card.",
+      "rows": [
+        {
+          "role": "planner",
+          "model": "Sonnet 5.5",
+          "effort": "xhigh",
+          "spawn": "Agent tool",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "planner",
+          "model": "Opus 5.5",
+          "effort": "medium",
+          "spawn": "Agent tool",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "reviewer",
+          "model": "Sonnet 5.5",
+          "effort": "xhigh",
+          "spawn": "Agent tool",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "reviewer",
+          "model": "Opus 5.5",
+          "effort": "medium",
+          "spawn": "Agent tool",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "loop-breaker",
+          "model": "Sonnet 5.5",
+          "effort": "xhigh",
+          "spawn": "Agent tool",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "loop-breaker",
+          "model": "Opus 5.5",
+          "effort": "medium",
+          "spawn": "Agent tool",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "explorer",
+          "model": "Sonnet 5.5",
+          "effort": "medium",
+          "spawn": "Agent tool",
+          "context": "fresh",
+          "claim": "required"
+        }
+      ]
+    },
+    "exp": {
+      "root": "Opus 5.5 medium",
+      "turnLine": "CLOOP town: the council (Opus 5.5 medium + gpt-6.1-terra max) drafts apart, judges apart and blind (any reproduced violation blocks) and breaks loops apart; explorers gpt-6.1-terra medium; the root merges by the merge card.",
+      "rows": [
+        {
+          "role": "planner",
+          "model": "Opus 5.5",
+          "effort": "medium",
+          "spawn": "Agent tool",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "planner",
+          "model": "gpt-6.1-terra",
+          "effort": "max",
+          "spawn": "codex exec",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "reviewer",
+          "model": "Opus 5.5",
+          "effort": "medium",
+          "spawn": "Agent tool",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "reviewer",
+          "model": "gpt-6.1-terra",
+          "effort": "max",
+          "spawn": "codex exec",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "loop-breaker",
+          "model": "Opus 5.5",
+          "effort": "medium",
+          "spawn": "Agent tool",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "loop-breaker",
+          "model": "gpt-6.1-terra",
+          "effort": "max",
+          "spawn": "codex exec",
+          "context": "fresh",
+          "claim": "required"
+        },
+        {
+          "role": "explorer",
+          "model": "gpt-6.1-terra",
+          "effort": "medium",
+          "spawn": "codex exec",
+          "context": "fresh",
+          "claim": "required"
+        }
+      ]
+    }
+  }
+}

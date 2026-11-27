@@ -1,0 +1,150 @@
+{
+  "extension": "cheapgpt",
+  "profile": "cheap",
+  "source": {
+    "package": "cheapGPT",
+    "version": "1.10.0",
+    "commit": "80c47fcd200faa974881ba39990af09b1cb83401",
+    "file": "profiles/roles.json"
+  },
+  "editions": {
+    "codex": {
+      "root": "gpt-6.1-sol medium",
+      "turnLine": "CHEAPGPT cheap: builders build (dynamic gpt-6.1-terra medium, mechanical gpt-6-luna max, via spawn_agent) from handoffs that quote the criterion; the root decides, runs every real run through the engine and merges.",
+      "rows": [
+        {
+          "role": "builder-dynamic",
+          "model": "gpt-6.1-terra",
+          "effort": "medium",
+          "spawn": "spawn_agent",
+          "context": "inherits",
+          "claim": "required"
+        },
+        {
+          "role": "builder-mechanical",
+          "model": "gpt-6-luna",
+          "effort": "max",
+          "spawn": "spawn_agent",
+          "context": "inherits",
+          "claim": "required"
+        },
+        {
+          "role": "planner",
+          "model": "gpt-6.1-sol",
+          "effort": "xhigh",
+          "spawn": "spawn_agent",
+          "context": "inherits",
+          "claim": "optional"
+        },
+        {
+          "role": "reviewer",
+          "model": "gpt-6.1-sol",
+          "effort": "medium",
+          "spawn": "spawn_agent",
+          "context": "fresh",
+          "claim": "optional"
+        },
+        {
+          "role": "loop-breaker",
+          "model": "gpt-6.1-sol",
+          "effort": "xhigh",
+          "spawn": "spawn_agent",
+          "context": "fresh",
+          "claim": "optional"
+        }
+      ]
+    },
+    "claude": {
+      "root": "Opus 5.5 medium",
+      "turnLine": "CHEAPGPT cheap: builders build (dynamic Sonnet 5.5 medium, mechanical Haiku 5.5 xhigh, via the Agent tool) from handoffs that quote the criterion; the root decides, runs every real run through the engine and merges.",
+      "rows": [
+        {
+          "role": "builder-dynamic",
+          "model": "Sonnet 5.5",
+          "effort": "medium",
+          "spawn": "Agent tool",
+          "context": "inherits",
+          "claim": "required"
+        },
+        {
+          "role": "builder-mechanical",
+          "model": "Haiku 5.5",
+          "effort": "xhigh",
+          "spawn": "Agent tool",
+          "context": "inherits",
+          "claim": "required"
+        },
+        {
+          "role": "planner",
+          "model": "Opus 5.5",
+          "effort": "xhigh",
+          "spawn": "Agent tool",
+          "context": "inherits",
+          "claim": "optional"
+        },
+        {
+          "role": "reviewer",
+          "model": "Opus 5.5",
+          "effort": "medium",
+          "spawn": "Agent tool",
+          "context": "fresh",
+          "claim": "optional"
+        },
+        {
+          "role": "loop-breaker",
+          "model": "Opus 5.5",
+          "effort": "xhigh",
+          "spawn": "Agent tool",
+          "context": "fresh",
+          "claim": "optional"
+        }
+      ]
+    },
+    "exp": {
+      "root": "Opus 5.5 medium",
+      "turnLine": "CHEAPGPT cheap: builders build (dynamic gpt-6.1-terra medium, mechanical gpt-6-luna max, via codex exec) from handoffs that quote the criterion; the root decides, runs every real run through the engine and merges.",
+      "rows": [
+        {
+          "role": "builder-dynamic",
+          "model": "gpt-6.1-terra",
+          "effort": "medium",
+          "spawn": "codex exec",
+          "context": "inherits",
+          "claim": "required"
+        },
+        {
+          "role": "builder-mechanical",
+          "model": "gpt-6-luna",
+          "effort": "max",
+          "spawn": "codex exec",
+          "context": "inherits",
+          "claim": "required"
+        },
+        {
+          "role": "planner",
+          "model": "Opus 5.5",
+          "effort": "xhigh",
+          "spawn": "Agent tool",
+          "context": "inherits",
+          "claim": "optional"
+        },
+        {
+          "role": "reviewer",
+          "model": "Opus 5.5",
+          "effort": "medium",
+          "spawn": "Agent tool",
+          "context": "fresh",
+          "claim": "optional"
+        },
+        {
+          "role": "loop-breaker",
+          "model": "Opus 5.5",
+          "effort": "xhigh",
+          "spawn": "Agent tool",
+          "context": "fresh",
+          "claim": "optional"
+        }
+      ]
+    }
+  }
+}

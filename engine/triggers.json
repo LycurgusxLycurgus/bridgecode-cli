@@ -1,0 +1,129 @@
+{
+  "specialists": {
+    "best-agent": {
+      "file": "bridgecode/best-agent.md",
+      "when": [
+        { "state": ["ADOPT", "DEFINE"], "why": "the Brief: intent, completion criterion, interpretation, perspective, anticipated objection" }
+      ],
+      "question": "Has the intent changed, or has a consequential ambiguity about it appeared? best-agent is essential to Bridgecode: load it whenever the answer is not a clear no.",
+      "ask": ["EXPLORE", "ONESHOT", "LOOP", "BREAK", "GATE", "ASK", "ACCEPT"],
+      "packet": ["planner"]
+    },
+    "bertram-gilfoyle": {
+      "file": "bridgecode/bertram-gilfoyle.md",
+      "when": [
+        { "state": ["DEFINE"], "why": "the merge treatments: trace every criterion to the problem" },
+        { "state": ["BREAK", "ASK"], "why": "the full step back: remove before adding" },
+        { "state": ["CONSOLIDATE"], "why": "subtraction and the prune pass" },
+        { "signal": ["spiral"], "why": "a formalized spiral signal" },
+        { "signal": ["testAlert"], "why": "a test-volume alert" }
+      ],
+      "question": "Is something being added in response to a failure, or is the design growing faster than its obligations?",
+      "ask": ["ONESHOT", "LOOP", "GATE"],
+      "packet": ["loop-breaker"]
+    },
+    "tony-stark": {
+      "file": "bridgecode/tony-stark.md",
+      "when": [
+        { "tag": ["llm"], "why": "an LLM-in-the-loop criterion" },
+        { "tag": ["law"], "why": "a universal property needs a law-level check" },
+        { "state": ["ADOPT", "DEFINE"], "missing": "agentic/architecture.md", "why": "no architecture yet: choose the representation and the contracts" },
+        { "state": ["EXPLORE"], "why": "options that differ in mechanism and representation" },
+        { "state": ["BREAK"], "why": "a mechanism may be replaced: construction over detection" }
+      ],
+      "question": "Is the target representation unfamiliar, or does a property need a law-level check?",
+      "ask": ["ONESHOT", "LOOP", "CONSOLIDATE"],
+      "packet": ["explorer", "loop-breaker"]
+    },
+    "signal": {
+      "file": "bridgecode/signal.md",
+      "when": [
+        { "state": ["DEFINE"], "why": "the merge treatments: rank by contribution, elevate, remove, merge" },
+        { "state": ["CONSOLIDATE"], "signal": ["testAlert"], "why": "the prune pass" },
+        { "state": ["CONDENSE"], "signal": ["memoryAlert"], "why": "the distill pass" }
+      ],
+      "question": "Is ranking what matters the work here?",
+      "ask": ["EXPLORE", "ONESHOT", "LOOP", "BREAK", "CONSOLIDATE", "CONDENSE"],
+      "packet": []
+    },
+    "taste": {
+      "file": "bridgecode/taste.md",
+      "when": [
+        { "tag": ["taste"], "why": "a discretionary choice of expression, experience, form or identity" }
+      ],
+      "question": "Is there an open discretionary choice of expression, experience, form or identity, or a taste-bearing specialist whose default style for the root model is not yet calibrated?",
+      "ask": ["DEFINE", "EXPLORE", "ONESHOT", "LOOP"],
+      "packet": []
+    },
+    "design": {
+      "file": "bridgecode/design.md",
+      "craft": "design",
+      "when": [
+        { "tag": ["ui"], "why": "a ui criterion in scope" },
+        { "files": ["**/*.css", "**/*.scss", "**/*.sass", "**/*.less", "**/*.html", "**/*.jsx", "**/*.tsx", "**/*.vue", "**/*.svelte", "**/*.astro", "**/components/**", "**/styles/**", "**/ui/**"], "state": ["ONESHOT", "LOOP", "BREAK", "GATE"], "why": "the work touches UI files" }
+      ],
+      "question": "Does this stage build something that looks or feels?",
+      "ask": ["DEFINE", "EXPLORE", "ONESHOT", "LOOP"],
+      "packet": ["builder-dynamic", "builder-mechanical", "explorer", "reviewer"]
+    },
+    "writing": {
+      "file": "bridgecode/writing.md",
+      "craft": "writing",
+      "when": [
+        { "tag": ["prose"], "why": "a prose criterion in scope" },
+        { "files": ["**/*.md", "**/*.mdx", "**/*.rst", "**/*.txt", "**/docs/**"], "state": ["ONESHOT", "LOOP", "BREAK", "GATE"], "why": "the work touches documentation" }
+      ],
+      "question": "Does this stage produce substantial prose?",
+      "ask": ["DEFINE", "ONESHOT", "LOOP"],
+      "packet": ["builder-dynamic", "builder-mechanical", "reviewer"]
+    },
+    "copywriting": {
+      "file": "bridgecode/copywriting.md",
+      "craft": "copywriting",
+      "when": [
+        { "tag": ["copy"], "why": "a copy criterion in scope" }
+      ],
+      "question": "Does this stage produce product or marketing copy?",
+      "ask": ["DEFINE", "ONESHOT", "LOOP"],
+      "packet": ["builder-dynamic", "builder-mechanical", "reviewer"]
+    },
+    "imagegen": {
+      "file": "bridgecode/imagegen.md",
+      "craft": "imagegen",
+      "when": [
+        { "tag": ["image"], "why": "an image criterion in scope" }
+      ],
+      "question": "Does this stage generate an image?",
+      "ask": ["DEFINE", "ONESHOT", "LOOP"],
+      "packet": ["builder-dynamic", "builder-mechanical"]
+    },
+    "monoprompting": {
+      "file": "bridgecode/monoprompting.md",
+      "craft": "writing rule",
+      "when": [
+        { "tag": ["prompt"], "why": "a prompt criterion in scope" },
+        { "files": ["**/AGENTS.md", "**/CLAUDE.md", "**/SKILL.md", "**/*.prompt.md", "**/prompts/**", "**/skills/**", "bridgecode/**"], "state": ["ONESHOT", "LOOP", "BREAK", "GATE"], "why": "the work touches a prompt, skill or instruction file" }
+      ],
+      "question": "Does this stage create or revise a prompt?",
+      "ask": ["DEFINE", "ONESHOT", "LOOP"],
+      "packet": ["builder-dynamic", "builder-mechanical", "reviewer"]
+    },
+    "distillation": {
+      "file": "bridgecode/distillation.md",
+      "when": [
+        { "writingRuleMissing": true, "why": "a calibrated writing default style without its writing rule" }
+      ],
+      "packet": []
+    },
+    "memory": {
+      "file": "bridgecode/memory.md",
+      "when": [
+        { "state": ["ADOPT"], "why": "reverse-deriving the durable memory" },
+        { "state": ["CONDENSE"], "why": "the memory pass under the edit protocol" },
+        { "signal": ["memoryAlert"], "why": "a memory-budget alert" },
+        { "firstTask": true, "state": ["DEFINE"], "why": "the first task in this project: create the durable memory" }
+      ],
+      "packet": []
+    }
+  }
+}

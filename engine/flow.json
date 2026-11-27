@@ -1,0 +1,232 @@
+{
+  "version": "4.6.0",
+  "start": {
+    "new": "DEFINE",
+    "existing": "ADOPT"
+  },
+  "escape": "ASK",
+  "states": {
+    "ADOPT": {
+      "next": ["DEFINE", "ASK"],
+      "exit": ["stepBack", "baselineRun", "adoptRecord", "adoptCount"]
+    },
+    "DEFINE": {
+      "next": ["EXPLORE", "ONESHOT", "LOOP", "BREAK", "GATE", "ASK"],
+      "exit": ["briefRecorded", "stepBack", "rubricValid", "rubricFrozen", "planReviewed", "userAnswer", "redefineBuilds"],
+      "to": {
+        "EXPLORE": ["exploreTrigger"],
+        "ONESHOT": ["fullOnly"],
+        "LOOP": ["oneshotFirst"],
+        "GATE": ["allEstablished", "nextShotDone"]
+      }
+    },
+    "EXPLORE": {
+      "next": ["LOOP", "BREAK", "ASK"],
+      "exit": ["rubricUnchanged", "stepBack", "exploreSettled", "passRoute"]
+    },
+    "ONESHOT": {
+      "next": ["LOOP", "BREAK", "EXPLORE", "ASK"],
+      "exit": ["rubricUnchanged", "stepBack", "realRun", "judged", "passRoute"],
+      "to": {
+        "EXPLORE": ["exploreTrigger"]
+      }
+    },
+    "LOOP": {
+      "next": ["LOOP", "BREAK", "GATE", "ASK"],
+      "exit": ["rubricUnchanged", "stepBack", "seenFailing", "judged", "passRoute"],
+      "to": {
+        "GATE": ["allEstablished", "nextShotDone"]
+      }
+    },
+    "BREAK": {
+      "next": ["LOOP", "BREAK", "GATE", "ASK"],
+      "exit": ["rubricUnchanged", "stepBack", "judged", "passRoute"],
+      "to": {
+        "GATE": ["allEstablished", "nextShotDone"]
+      }
+    },
+    "GATE": {
+      "next": ["LOOP", "BREAK", "CONSOLIDATE", "ACCEPT", "ASK"],
+      "exit": ["rubricUnchanged", "stepBack", "e2eRun", "suiteRun", "judged", "passRoute"]
+    },
+    "CONSOLIDATE": {
+      "next": ["GATE", "ASK"],
+      "exit": ["rubricUnchanged", "stepBack", "checksRun", "metricsRecorded", "candidateFrozen"]
+    },
+    "ASK": {
+      "next": ["DEFINE", "EXPLORE", "STOPPED"],
+      "exit": ["userAnswer"],
+      "to": {
+        "DEFINE": ["stepBack", "replanApproved"],
+        "EXPLORE": ["stepBack", "replanApproved"]
+      }
+    },
+    "ACCEPT": {
+      "next": ["CONDENSE", "DEFINE", "EXPLORE"],
+      "exit": ["userAnswer"],
+      "to": {
+        "CONDENSE": ["finalReport", "proposalsResolved", "gatedHead"]
+      }
+    },
+    "CONDENSE": {
+      "next": ["DONE"],
+      "exit": ["rubricUnchanged", "stepBack", "memoryShape", "metricsRecorded"]
+    },
+    "DONE": {
+      "next": [],
+      "terminal": true
+    },
+    "STOPPED": {
+      "next": [],
+      "terminal": true
+    }
+  },
+  "always": ["ladder", "pendingStepBack", "breakTargets"],
+  "prevent": {
+    "ADOPT": { "step": "first", "block": true, "before": ["run", "adopt", "freeze"] },
+    "DEFINE": { "step": "first", "block": true, "before": ["freeze", "planreview", "call reviewer"] },
+    "EXPLORE": { "step": "full", "block": false, "before": ["call", "run", "judge", "winner"] },
+    "ONESHOT": { "step": "first", "block": false, "before": ["call", "run", "judge"] },
+    "LOOP": { "step": "first", "block": true, "before": ["call", "run", "judge"] },
+    "BREAK": { "step": "breakers", "block": true, "before": ["call reviewer", "run", "judge"] },
+    "GATE": { "step": "first", "block": true, "before": ["call", "run", "judge"] },
+    "CONSOLIDATE": { "step": "first", "block": true, "before": ["run", "metrics", "candidate"] },
+    "ASK": { "step": "replan", "block": true, "before": ["approve"] },
+    "CONDENSE": { "step": "first", "block": true, "before": ["metrics"] }
+  },
+  "judge": {
+    "FOCUSED": {
+      "explore": "reviewer",
+      "merge": "reviewer",
+      "loop": "root",
+      "break": "reviewer",
+      "gate": "reviewer"
+    },
+    "FULL": {
+      "explore": "reviewer",
+      "merge": "reviewer",
+      "oneshot": "reviewer",
+      "loop": "reviewer",
+      "break": "reviewer",
+      "gate": "reviewer"
+    }
+  },
+  "commands": {
+    "brief": ["ADOPT", "DEFINE"],
+    "adopt": ["ADOPT"],
+    "freeze": ["ADOPT", "DEFINE"],
+    "planreview": ["DEFINE"],
+    "call planner": ["DEFINE"],
+    "call reviewer": ["DEFINE", "EXPLORE", "ONESHOT", "LOOP", "BREAK", "GATE"],
+    "call explorer": ["EXPLORE"],
+    "call loop-breaker": ["BREAK", "ASK"],
+    "call builder-dynamic": ["ONESHOT", "LOOP"],
+    "call builder-mechanical": ["ONESHOT", "LOOP"],
+    "stepback tiny": ["ADOPT", "DEFINE", "LOOP", "BREAK", "GATE", "CONSOLIDATE", "CONDENSE"],
+    "stepback small": ["ADOPT", "DEFINE", "EXPLORE", "ONESHOT", "LOOP", "BREAK", "GATE", "CONSOLIDATE", "CONDENSE"],
+    "stepback full": ["EXPLORE", "BREAK"],
+    "stepback replan": ["ASK"],
+    "block --call": ["BREAK"],
+    "run --before": ["LOOP", "BREAK"],
+    "run --e2e": ["GATE"],
+    "run --suite": ["GATE"],
+    "judge explore": ["EXPLORE"],
+    "judge merge": ["EXPLORE"],
+    "judge oneshot": ["ONESHOT"],
+    "judge loop": ["LOOP"],
+    "judge break": ["BREAK"],
+    "judge gate": ["GATE"],
+    "winner": ["EXPLORE"],
+    "reproduce": ["EXPLORE", "ONESHOT", "LOOP", "BREAK", "GATE"],
+    "redispatch": ["DEFINE", "EXPLORE", "ONESHOT", "LOOP", "BREAK", "GATE", "ASK"],
+    "blocked": ["ADOPT", "DEFINE", "EXPLORE", "ONESHOT", "LOOP", "BREAK", "GATE", "CONSOLIDATE"],
+    "approve": ["ASK"],
+    "candidate": ["CONSOLIDATE"],
+    "report --final": ["ACCEPT"],
+    "clean": ["DONE"]
+  },
+  "rungs": {
+    "first": {
+      "state": "LOOP",
+      "says": "your step back (tiny on FOCUSED, small on FULL) and one-block, then a loop"
+    },
+    "full": {
+      "state": "BREAK",
+      "says": "the loop-breakers' full step backs from scratch, each building one fix; the root merges"
+    },
+    "redefine": {
+      "state": "ASK",
+      "says": "a re-define: the user's comment, the loop-breakers' re-plan, the user's approval"
+    }
+  },
+  "ladder": {
+    "first": {
+      "ADVANCED": [3, "full"],
+      "STALLED": [2, "full"],
+      "REGRESSION": [2, "full"]
+    },
+    "full": {
+      "ADVANCED": [1, "first"],
+      "STALLED": [2, "redefine"],
+      "REGRESSION": [2, "redefine"]
+    },
+    "redefine": {
+      "ADVANCED": [1, "first"],
+      "STALLED": [1, "redefine"],
+      "REGRESSION": [1, "redefine"]
+    },
+    "pass": "first",
+    "blocked": "redefine",
+    "oneshot": {
+      "good": "LOOP",
+      "bad": "ASK",
+      "badFull": "EXPLORE"
+    }
+  },
+  "cards": [
+    { "card": "adopt", "state": "ADOPT", "role": "root" },
+    { "card": "step-back", "state": "ADOPT", "role": "root" },
+    { "card": "define", "state": "DEFINE", "role": "root" },
+    { "card": "step-back", "state": "DEFINE", "role": "root" },
+    { "card": "merge", "state": "DEFINE", "role": "root" },
+    { "card": "planner", "state": "DEFINE", "role": "planner" },
+    { "card": "judge", "state": "DEFINE", "role": "reviewer" },
+    { "card": "explore", "state": "EXPLORE", "role": "root" },
+    { "card": "step-back", "state": "EXPLORE", "role": "root" },
+    { "card": "merge", "state": "EXPLORE", "role": "root" },
+    { "card": "explorer", "state": "EXPLORE", "role": "explorer" },
+    { "card": "judge", "state": "EXPLORE", "role": "reviewer" },
+    { "card": "oneshot", "state": "ONESHOT", "role": "root" },
+    { "card": "step-back", "state": "ONESHOT", "role": "root" },
+    { "card": "judge", "state": "ONESHOT", "role": "reviewer" },
+    { "card": "dynamic", "state": "ONESHOT", "role": "builder-dynamic" },
+    { "card": "mechanical", "state": "ONESHOT", "role": "builder-mechanical" },
+    { "card": "loop", "state": "LOOP", "role": "root" },
+    { "card": "step-back", "state": "LOOP", "role": "root" },
+    { "card": "merge", "state": "LOOP", "role": "root" },
+    { "card": "judge", "state": "LOOP", "role": "reviewer" },
+    { "card": "dynamic", "state": "LOOP", "role": "builder-dynamic" },
+    { "card": "mechanical", "state": "LOOP", "role": "builder-mechanical" },
+    { "card": "break", "state": "BREAK", "role": "root" },
+    { "card": "step-back", "state": "BREAK", "role": "root" },
+    { "card": "merge", "state": "BREAK", "role": "root" },
+    { "card": "breaker", "state": "BREAK", "role": "loop-breaker" },
+    { "card": "judge", "state": "BREAK", "role": "reviewer" },
+    { "card": "gate", "state": "GATE", "role": "root" },
+    { "card": "step-back", "state": "GATE", "role": "root" },
+    { "card": "judge", "state": "GATE", "role": "reviewer" },
+    { "card": "consolidate", "state": "CONSOLIDATE", "role": "root" },
+    { "card": "step-back", "state": "CONSOLIDATE", "role": "root" },
+    { "card": "ask", "state": "ASK", "role": "root" },
+    { "card": "break", "state": "ASK", "role": "root" },
+    { "card": "step-back", "state": "ASK", "role": "root" },
+    { "card": "merge", "state": "ASK", "role": "root" },
+    { "card": "breaker", "state": "ASK", "role": "loop-breaker" },
+    { "card": "accept", "state": "ACCEPT", "role": "root" },
+    { "card": "condense", "state": "CONDENSE", "role": "root" },
+    { "card": "step-back", "state": "CONDENSE", "role": "root" },
+    { "card": "report", "state": "CONDENSE", "role": "root" },
+    { "card": "done", "state": "DONE", "role": "root" },
+    { "card": "stopped", "state": "STOPPED", "role": "root" }
+  ]
+}

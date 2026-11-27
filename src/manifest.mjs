@@ -6,11 +6,46 @@ import { fileURLToPath } from "node:url";
 export const PACKAGE_ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 export const METADATA_PATH = ".bridgecode/installation.json";
 export const SCHEMA_VERSION = 2;
-export const HOOK_PATH = ".codex/hooks/bridgecode-turn.mjs";
-export const SPECIALISTS = ["best-agent", "taste", "design", "writing", "copywriting", "monoprompting"];
-export const PAYLOAD_PATHS = ["AGENTS.md", "README_HUMAN.txt", ...SPECIALISTS.map(n => `bridgecode/${n}.md`)];
+export const MANIFEST_SCHEMA = 3;
+export const LEGACY_HOOK_PATH = ".codex/hooks/bridgecode-turn.mjs";
+export const SPECIALISTS = ["bertram-gilfoyle", "tony-stark", "best-agent", "signal", "taste", "distillation", "monoprompting", "memory", "writing", "copywriting", "design", "imagegen"];
+export const CARDS = ["adopt", "define", "planner", "merge", "judge", "explore", "explorer", "oneshot", "loop", "step-back", "dynamic", "mechanical", "break", "breaker", "gate", "consolidate", "ask", "accept", "condense", "report", "done", "stopped"];
+export const CORE_CARDS = ["best-agent", "signal", "bertram-gilfoyle", "tony-stark"];
+// Package path under engine/ -> installed under .bridgecode/engine/.
+export const ENGINE_FILES = ["engine.mjs", "flow.json", "triggers.json", ...CARDS.map(c => `cards/${c}.md`), ...CORE_CARDS.map(c => `core/${c}.md`)];
+export const ENGINE_DIR = ".bridgecode/engine";
+// roles.json is written by the CLI from the installed extensions and is outside the owned set.
+export const ROLES_PATH = `${ENGINE_DIR}/roles.json`;
+export const EXTENSIONS = ["cheapgpt-cheap", "cheapgpt-cheap-100", "cloop-town", "cloop-high"];
+export const rolesSource = id => `roles/${id}.json`;
+export const EDITIONS = {
+  codex: { instruction: "AGENTS.md", hookConfig: ".codex/hooks.json", hookPath: ".codex/hooks/bridgecode-turn.mjs" },
+  claude: { instruction: "CLAUDE.md", hookConfig: ".claude/settings.json", hookPath: ".claude/hooks/bridgecode-turn.mjs" },
+  exp: { instruction: "CLAUDE.md", hookConfig: ".claude/settings.json", hookPath: ".claude/hooks/bridgecode-turn.mjs" },
+};
+export const editionSource = (edition, file) => `editions/${edition}/${file}`;
+export const PAYLOAD_PATHS = [
+  ...SPECIALISTS.map(n => `bridgecode/${n}.md`),
+  ...ENGINE_FILES.map(f => `engine/${f}`),
+  ...EXTENSIONS.map(rolesSource),
+  ...Object.entries(EDITIONS).flatMap(([e, d]) => [editionSource(e, d.instruction), editionSource(e, "README_HUMAN.txt")]),
+];
+export const RESERVED = /^(?:\.git|\.agents|\.codex|\.claude|\.bridgecode|agentic)(?:\/|$)/i;
 export const sha256 = value => createHash("sha256").update(value).digest("hex");
 export const toPosixPath = value => value.split(path.sep).join("/");
+
+export function assertEdition(edition) {
+  if (!Object.hasOwn(EDITIONS, edition)) throw new Error(`Invalid --edition value: ${edition} (use codex, claude or exp)`);
+  return edition;
+}
+// Install path -> package path for one edition; extensions change only roles.json, which is not owned.
+export function payloadMap(edition) {
+  const map = {};
+  for (const n of SPECIALISTS) map[`bridgecode/${n}.md`] = `bridgecode/${n}.md`;
+  for (const f of ENGINE_FILES) map[`${ENGINE_DIR}/${f}`] = `engine/${f}`;
+  map["README_HUMAN.txt"] = editionSource(edition, "README_HUMAN.txt");
+  return map;
+}
 
 export function validateRelativePath(value, label = "path") {
   if (typeof value !== "string" || !value || /[\x00-\x1f]/.test(value)) throw new Error(`Unsafe ${label}`);
@@ -61,15 +96,16 @@ export async function loadPackageContext(packageRoot = PACKAGE_ROOT) {
   const root = await assertProjectDirectory(packageRoot);
   const packageJson = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
   const manifest = JSON.parse(await readFile(path.join(root, "payload-manifest.json"), "utf8"));
-  if (packageJson.name !== "@bridgecode/cli" || manifest.package !== packageJson.name || manifest.version !== packageJson.version || manifest.schemaVersion !== SCHEMA_VERSION) throw new Error("Payload manifest identity/version/schema mismatch");
+  if (packageJson.name !== "@bridgecode/cli" || manifest.package !== packageJson.name || manifest.version !== packageJson.version || manifest.schemaVersion !== MANIFEST_SCHEMA) throw new Error("Payload manifest identity/version/schema mismatch");
   assertHashMap(manifest.files, "manifest path");
   for (const p of PAYLOAD_PATHS) if (!Object.hasOwn(manifest.files,p)) throw new Error(`Required payload absent: ${p}`);
-  // Future payloads may add ordinary paths; repository ownership is checked separately.
-  for (const p of Object.keys(manifest.files)) if (/^(?:\.git|\.agents|\.codex|\.bridgecode|agentic)(?:\/|$)/i.test(p)) throw new Error(`Reserved payload path: ${p}`);
+  for (const p of Object.keys(manifest.files)) if (RESERVED.test(p)) throw new Error(`Reserved payload path: ${p}`);
   await verifyPayload(root, manifest);
   const hook = await readFile(path.join(root, "hooks/bridgecode-turn.mjs"));
   if (sha256(hook) !== manifest.hookHash) throw new Error("Hook payload checksum mismatch");
-  return {packageRoot:root, packageJson, manifest, hook};
+  const texts = {};
+  for (const p of Object.keys(manifest.files)) texts[p] = (await readFile(path.join(root, p))).toString("utf8");
+  return {packageRoot:root, packageJson, manifest, hook, texts};
 }
 export async function verifyPayload(root, manifest) {
   assertHashMap(manifest.files, "manifest path");
@@ -77,10 +113,6 @@ export async function verifyPayload(root, manifest) {
     const bytes = await readOptional(root,p);
     if (!bytes || sha256(bytes) !== h) throw new Error(`Payload checksum mismatch: ${p}`);
   }
-}
-export async function readPayloadFile(context,p) {
-  if (!Object.hasOwn(context.manifest.files,p)) throw new Error(`Unmanaged payload: ${p}`);
-  return readFile(await safeTarget(context.packageRoot,p));
 }
 export async function legacyContext(packageRoot = PACKAGE_ROOT, version = "4.1.0") {
   if(!/^\d+\.\d+\.\d+$/.test(version))throw new Error("Invalid legacy version");

@@ -1,7 +1,7 @@
 {
   "name": "@bridgecode/cli",
-  "version": "4.3.2",
-  "description": "Install, update, and verify Bridgecode repo-local instructions.",
+  "version": "4.6.0",
+  "description": "Install, update and verify Bridgecode, a harness director for Codex and Claude Code: one policy, an engine that enforces the flow and witnesses runs, verdicts and the user's answers, on-demand specialists, project memory, and optional cheapGPT and cLoop role assignments.",
   "type": "module",
   "bin": {
     "bridgecode": "bin/bridgecode.mjs"
@@ -10,29 +10,32 @@
     "node": ">=22"
   },
   "files": [
-    "AGENTS.md",
     "README.md",
-    "README_HUMAN.txt",
     "CHANGELOG.md",
     "LICENSE",
     "payload-manifest.json",
     "bin/",
     "src/",
     "bridgecode/",
+    "engine/",
+    "roles/",
+    "editions/",
     "hooks/",
     "legacy/"
   ],
   "scripts": {
     "build:manifest": "node scripts/build-manifest.mjs",
     "prepack": "npm run build:manifest",
-    "test": "node --test test/lifecycle.test.mjs test/safety.test.mjs test/hooks.test.mjs test/policy.test.mjs",
+    "test": "node --test test/lifecycle.test.mjs test/safety.test.mjs test/hooks.test.mjs test/policy.test.mjs test/extensions.test.mjs test/metrics.test.mjs test/doctor.test.mjs test/engine.test.mjs",
     "test:tarball": "node --test test/tarball.test.mjs",
     "sync:payload": "node scripts/sync-payload.mjs",
     "test:release": "node scripts/test-release.mjs"
   },
   "keywords": [
     "codex",
+    "claude-code",
     "agents.md",
+    "claude.md",
     "agent",
     "instructions",
     "cli"

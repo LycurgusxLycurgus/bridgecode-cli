@@ -5,3 +5,6 @@ node_modules/
 .DS_Store
 release/
 agentic/primitives-private.md
+
+# Bridgecode metrics cache when the CLI is run on this repository
+.bridgecode/

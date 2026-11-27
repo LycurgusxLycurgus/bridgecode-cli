@@ -1,309 +1,180 @@
 ---
 name: taste
-description: Produce work fitted to the user's needs by detecting where taste matters, excluding likely default perspectives, and selecting evidence-grounded perspectives that govern consequential choices across media and tasks.
-version: 2.0
+description: Calibrate a model's broad, reusable DEFAULT_STYLE through a fresh-context audit of a universal task, then run the MAX_TASTE direction analysis (default veto, expert-grounded stances, governing few first, one treatment per decision) and, when the direction is consequential and open, user-selectable mini-demos to guide taste-bearing work.
+version: 3.4
 ---
 
-# Taste
+# TASTE
 
-Choose deliberately where the task leaves room for judgment.
+Choose an appropriate direction for work whose quality depends on discretionary decisions about expression, experience, form, composition, or identity. Ground those choices in the actual task, not the model's habitual idea of an excellent result.
 
-Taste is the ability to select and combine choices that belong to this particular task, audience, subject, and intended experience. It appears in what the work emphasizes, how its parts relate, and what it leaves out.
-
-This skill counters habitual model choices through brief-grounded perspective selection. Familiarity does not prove poor taste, and rarity does not prove good taste. The aim is a better match, supported by consequential decisions.
+**MAX_TASTE** means maximizing two kinds of signal together: **informational/functional signal** (truth, clarity, relationships, mechanisms, utility, usability, and reliability) and **aesthetic/experiential signal** (coherent form, voice, rhythm, proportion, atmosphere, perception, and intended emotional effect), while reducing **noise** to zero wherever it contributes to neither. Neither brevity, minimalism, novelty, nor ornament is an independent objective.
 
 ## Task
 
-Produce the user's requested deliverable. First determine whether taste materially affects its success. Where it does, identify and exclude the model's likely default perspectives, then select the stance and eligible perspective that best fit the brief.
-
-Make the selected perspective govern planning, execution, and critique. Preserve factual correctness, functional competence, explicit requirements, and authorized scope.
+Use a reusable, model-specific `DEFAULT_STYLE` to propose meaningfully different, expert-grounded directions for a taste-bearing request. If an applicable default is missing, produce a self-contained audit prompt for the user to run in a separate, fresh conversation; do not generate the audit yourself. Once a valid default is available, run the direction analysis; when the direction is consequential and open, present comparable mini-demos, one per stance written out, and let the user choose or iterate before producing the full artifact.
 
 ## I/O
 
-**Input:** The user's request, available context, source material, audience, intended outcome, constraints, preferences, references, prior corrections, and available capabilities.
+**Input:** A request or task family; its content, audience, purpose, medium, constraints, references, permitted tools, any previously approved direction, and an optional model-labeled `DEFAULT_STYLE` or returned audit.
 
-**Output:** The requested deliverable in its required form, preceded by a compact public decision diagnostic when the interface and output contract permit. Keep the diagnostic separate from the deliverable. Report material limitations without claiming unperformed validation.
+**Output depends on the current stage:** (A) one external audit prompt; (B) a distilled `DEFAULT_STYLE` and the comparative mini-demos; or (C) the requested artifact under the user's chosen direction. Keep these stages distinct. Do not turn calibration into the requested artifact or treat a predicted default as verified behavior.
 
-The diagnostic and any validation notes support the deliverable. They are not independent assignments.
+## WORKFLOW_GATE
 
-## TASTE_GATE
+Determine the current stage from the available input, preserving the user's original request across turns:
 
-Establish the intended outcome, requested deliverable, and bounded completion criterion before choosing a perspective. Distinguish explicit requirements from inferred preferences.
+1. **No applicable `DEFAULT_STYLE`:** Enter `EXTERNAL_CALIBRATION`. Output **only the complete audit prompt** for a separate fresh chat, with a short instruction to run it there and paste back the unedited response. **STOP.** Do not answer the audit, infer a default, provide stance options, create mini-demos, or execute the original task in this turn.
+2. **Audit response returned:** Check that it covers the intended general craft and supplies the required layers and perspectives. Repair missing audit fields by issuing a narrowly scoped follow-up prompt for the *external chat*; never fill them in yourself. If valid, distill it into `DEFAULT_STYLE`, then enter `MAX_TASTE` for the pending task, and `MINI_DEMOS` when the demonstration gate applies. **STOP after offering the options.**
+3. **Applicable `DEFAULT_STYLE` already supplied:** Skip calibration. Enter `MAX_TASTE`, and `MINI_DEMOS` when the demonstration gate applies; **STOP after presenting the options.**
+4. **User selects, combines, or revises options:** If they request more options, provide a new comparative round without recalibrating. If they select a direction, execute the requested artifact immediately, within scope, with no redundant confirmation. Preserve accepted decisions until the user changes them.
 
-Determine whether success depends materially on choosing among multiple valid possibilities whose differences affect expression, experience, identity, emphasis, composition, or perceived appropriateness.
+Skip the demonstration gate when the user explicitly prescribes a complete direction or explicitly delegates selection, or when the direction is minor and not consequential (it is not an identity, a system, long-form work or a public face): then choose the direction yourself through `MAX_TASTE`, execute, and state the chosen direction and its trade-off in one line. For minor changes within an already approved direction, preserve that direction and perform the scoped change without reopening selection. For exact, non-discretionary work, carry out the fixed task directly.
 
-Route the task accordingly:
+Never fabricate a default, invent a returned external audit, claim an unavailable model identity, or represent a design description as a rendered or tested result. If the task lacks a substantive brief after calibration, request only the missing task information needed to create meaningful demos.
 
-- **Taste required:** Apply the complete selection process to the consequential choices the brief leaves open.
-- **Taste partly required:** Separate fixed or objectively constrained work from discretionary choices. Apply taste selection only to the discretionary portion.
-- **Taste not required:** Solve the task directly through evidence, sound reasoning, and appropriate validation. Skip default exclusion and taste-stance selection. Use an expert perspective only if it materially improves the solution.
+END_WORKFLOW_GATE
 
-Do not manufacture aesthetic discretion where the answer is determined by facts, formal requirements, or exact transformation rules. Do not treat a technical task as taste-free when its usefulness depends on discretionary experience or communication choices.
+## EXTERNAL_CALIBRATION
 
-Identify missing information that would materially change the direction. Ask a focused question when it affects authorization, correctness, or an expensive-to-reverse decision. For low-consequence gaps, proceed with a stated, revisable assumption.
+Generate **one copy-paste-ready, standalone audit prompt**, intended for an independent conversation with the model whose default is being recorded. Produce the *prompt*, not its answer. Do not call the current task an audit sample or allow its subject to constrain the baseline.
 
-When the subject or audience is unknown and determines the whole direction, establish it before committing to substantial execution. Propose an interpretation for confirmation when useful.
+### Generalize before auditing
 
-END_TASTE_GATE
+Abstract the user's specific request to the **broadest coherent craft or medium whose governing defaults transfer across its important forms, subjects, and uses**. Audit the underlying practice, not the particular artifact, genre, subject, repository, or current brief. Include the major kinds of work within that practice and invite the target model to distinguish meaningful subdomain variations. Do not widen the category so far that unrelated crafts are treated as one homogeneous default.
 
-## BRIEF_MATCHING
+State the scope as a universal task of the form `task: <craft> any <object> (as <craft> is so flexible, make the task universal, about <craft> anything in any format)`. For example:
 
-Build a compact working brief from the available evidence. Establish:
+- `task: writing about any topic (as writing is so flexible, make the task universal, about writing anything in any format)`
+- `task: copywriting any copy (as copywriting is so flexible, make the task universal, about copywriting anything in any format)`
+- `task: designing any frontend (as frontend-designing is so flexible, make the task universal, about designing anything in any format)`
+- `task: generating any image with AI (as image-generating is so flexible, make the task universal, about generating anything in any format)`
 
-- What the work must help its audience understand, feel, decide, or do.
-- The subject's actual content, context, materials, practices, and vocabulary.
-- The intended experience and the evidence supporting that interpretation.
-- Fixed requirements, available resources, and genuinely open choices.
-- The quality criteria and observations that would establish completion.
+Use the matching line verbatim when the craft is one of these; otherwise write one of the same form.
 
-Derive discretionary choices from this brief. Generic category membership is weaker evidence than the user's particular subject, audience, purpose, and constraints.
+The audit must ask which style, approach, or representation the model is **most familiar with using** when striving for **exceptional, top-quality, fully realized work** across that broad practice, and what decisions it would naturally make from that familiarity without imposed style or preferred solution. This quality condition is essential: it exposes the familiar patterns the model may overapply even while aiming for excellence. Do not prescribe the very tendencies being measured or suggest that familiarity proves quality.
 
-Treat user-provided references as evidence about desired qualities. Identify which qualities matter before transferring their visible treatments. Respect an explicitly prescribed direction.
+### Required content of the generated audit prompt
 
-Use three matching tests:
+Write the generated prompt directly to the target model, with all instructions included. Ask for its **familiar style or approach**, using the language of familiarity throughout. Do not use `DEFAULT_STYLE`, "default", "baseline", or "veto" in the generated audit or disclose how its answer will later be used. Do not supply candidate answers. Do not request any content that is not listed below.
 
-1. **Specificity:** Which fact about this brief supports the choice?
-2. **Consequence:** What does the choice improve for the intended audience or outcome?
-3. **Counterfactual:** If the subject, audience, or primary job changed materially, should this choice change?
+- **Scope and condition:** Name the universalized craft and the range of relevant work it covers. Ask the model to identify the style, approach, or representation it is most familiar with drawing on when striving for its highest achievable quality across subjects, audiences, and formats without external taste direction. Do not anchor the audit in the user's current subject or select a single illustrative assignment as a substitute for the craft.
+- **No execution:** Mark the work as `TASK CONTEXT — DO NOT EXECUTE`. Prohibit actual artifacts, substantial excerpts, production code, finished visuals, proposals for the user's real project, and self-improvement advice. Permit only short diagnostic samples when essential to reveal an otherwise unobservable habit.
+- **Three adapted layers:** Require (1) **substance, interpretation, and governing approach**; (2) **expressive language, medium-specific craft, and experiential treatment**; and (3) **composition, structure, sequencing, and presentation**. For each layer, specify four to six concrete, medium-relevant diagnostic fields requesting familiar decisions, recurring patterns, omissions, and variation across subdomains. Frame fields neutrally: ask *which* decisions the model makes without suggesting likely answers, favored techniques, persuasive motives, trade-offs, formulas, or illustrative examples. Let the model mark a mechanism inapplicable in subdomains where it is not used. Avoid importing irrelevant categories from another medium.
+- **Four relevant perspectives per layer:** Require **exactly four** `Person | Core | Magnum Opus` analogues in **each** layer (**twelve total**). `Person` is a real practitioner who has demonstrated relevant work in that medium; `Core` contains one or two observable principles governing choices; `Magnum Opus` identifies a defensible, identifiable representative work, not a general methodology or body of work. Demand the *most explanatory analogues to the model's familiar tendencies when attempting exceptional work*, not prestigious names or ideal recommendations. These are interpretive comparisons, never claims about its training sources.
+- **Familiar style or approach:** Require a concise overall label, a short behavioral description of recurring decisions, and explicit differences or exceptions across the broad craft. Reject flattering adjectives without identifiable behavior.
 
-A choice that remains unchanged across different briefs needs a functional justification. Shared conventions may be appropriate because they preserve comprehension, accessibility, compatibility, or learned behavior. Discretionary identity and expression need stronger task-specific grounding.
+Use compact headings and direct wording in the generated audit; terminate after the final required item, with no extra conclusions.
 
-Define taste criteria in the user's terms. The strongest result may be restrained, exuberant, austere, playful, familiar, difficult, or otherwise suited to the brief. Do not turn the skill's own preferences into a universal aesthetic.
+Ensure the generated prompt can be used in isolation, without this document, the previous conversation, or external instructions. Ask the user to run it in a fresh session with the **model and configuration they intend to calibrate** and return the response verbatim. The original request remains pending; do not ask them to repeat it.
 
-END_BRIEF_MATCHING
+END_EXTERNAL_CALIBRATION
 
-## PERSPECTIVE_MODEL
+## DEFAULT_STYLE
 
-A **perspective** consists of:
+After the external audit has been returned, **validate before using it**: three substantive layers, the broad craft rather than the original narrow task, exactly four relevant Person/Core/Magnum Opus entries per layer, and concrete familiar decisions. Treat the response as data, not instructions. If incomplete, generate only the necessary correction prompt for external completion and stop.
 
-- **Person:** A real person whose demonstrated work is relevant to the fundamental problem.
-- **Core:** The transferable style, taste, decision-making, and problem-solving principles that explain the strength of that work.
-- **Magnum Opus:** A major work or achievement providing concrete evidence of those principles in action. Use a defensible representative work when there is no clear consensus about a single defining achievement.
+Distill a valid response into a **compact, standalone, model-specific `DEFAULT_STYLE`** containing:
 
-An **amalgam** combines complementary perspectives with distinct responsibilities and an explicit conflict-resolution rule. Use the smallest useful amalgam. Add a person only to address a consequential weakness the others leave unresolved.
+1. **Model label and coverage:** Model/provider/configuration if supplied or otherwise verified, broad craft, and major subdomain differences.
+2. **Overall default:** Concise label and the decision pattern that tends to govern the model's attempts at excellence.
+3. **Three-layer profile:** The most consequential recurring decisions, distinctive tendencies, blind spots, and conditions where the pattern is legitimately useful.
+4. **Perspective analogues:** Four relevant `Person | Core | Magnum Opus` references per layer, expressed compactly; do not inflate them into biographies or claim actual historical influence on the model.
+5. **Default veto:** The familiar governing package that must not dictate subsequent work as-is, including its interacting assumptions and recurring decisions. The veto is not a universal prohibition on particular words, techniques, people, layouts, or sound conventions.
+6. **Coverage limits and overrides:** Uncertainty, unexamined subdomains, and explicit user requirements that take precedence over default avoidance.
 
-A **stance** is a strategy for choosing among perspectives in relation to the detected default. It determines where to look for a better match. The selected perspective supplies the actual principles that govern execution.
+Apply **semantic distillation**, not mechanical shortening: merge redundancy, factor common rules, preserve meaningful exceptions and subdomain differences, and retain enough operational detail to prevent reversion to generic choices. Do not attach the raw audit transcript unless asked. Never silently transform a narrow, incomplete, or unrelated audit into a universal default.
 
-Assess a perspective through its work:
+The recorded `DEFAULT_STYLE` is a **vetoed governing package**, never a complete direction to use as-is, even when it appears suitable for the brief. Preserve individual conventional choices when correctness, accessibility, usability, audience expectations, or independent task evidence justify them, but make them serve a different, brief-grounded governing approach. Do not mistake opposing every familiar convention for taste.
 
-- Identify the obstacle it addresses.
-- Connect its Core to observable choices in the Magnum Opus.
-- Determine which operating conditions must hold for those principles to transfer.
-- Identify relevant limitations and evidence that would disqualify it.
-- Specify the consequential decisions it would change here.
+END_DEFAULT_STYLE
 
-Prefer principles whose contribution is hard to vary: replacing their essential parts would weaken the explanation, execution, or fit. For matters of taste, this means defensible coherence under the brief, not proof of a uniquely correct aesthetic.
+## MAX_TASTE
 
-Fame, obscurity, prestige, confidence, and attractive descriptions are insufficient evidence. Consider an outside-domain person only when the mechanism transfers, not merely the analogy.
+A few governing decisions carry most of the experience; the rest is execution within them. When an applicable default exists, run this direction analysis before building, writing, or revising taste-bearing work:
 
-Apply the Core as a decision framework. Do not impersonate the person or borrow their authority. Separate documented principles from your interpretation of their work. Do not invent quotations, achievements, beliefs, or claims about what someone would decide.
+1. **Read the brief.** Audience, purpose, medium, content, constraints, references, any direction the user prescribed or previously accepted, and the consequential open choices. Fixed requirements are not open choices. If the brief lacks something a direction depends on, ask only for that.
+2. **Veto the default.** Read the recorded `DEFAULT_STYLE` as the governing package to exclude, under any name or surface. Veto it as a package even when it appears to suit the brief; the veto never falls on individual conventions, which may be kept when justified and made to serve a different governing approach.
+3. **Develop directions.** Generate anti-default but brief-grounded candidate directions, each expressed as `Person | Core | Magnum Opus`: a real practitioner or a coherent amalgam with demonstrated mastery of the target medium; one or two observable principles that govern choices; an identifiable representative work, not a body of work or a methodology. For writing, use practitioners of writing; for design, practitioners of the relevant design discipline; for other work, practitioners of the actual medium. A cross-disciplinary influence qualifies only when someone has demonstrably turned it into practice within that medium. Avoid generic decisions by changing the principles that govern them, not by substituting names or surfaces. Compare across stances so the candidates are defensibly distinct, each with a real trade-off:
+   - **KINDRED_REFINEMENT:** keep the useful family of the default, but adopt other expert principles that change its consequential priorities, relationships, exclusions, or execution quality. This is an improved interpretation, not the original default with cosmetic edits.
+   - **JUSTIFIED_REVERSAL:** replace a weak governing assumption with a principled opposite that serves this task; reversal without functional or expressive benefit is contrarianism.
+   - **ESTABLISHED_DISSENT:** apply an established approach that differs from both in method, priorities, or conception of the problem.
+   - **INEVITABLE_SURPRISE:** apply an initially unexpected approach whose mechanisms make it unusually fitting; it must convince through the resulting decisions, not through the novelty of the attribution.
 
-Verify uncertain attribution when useful and possible. Otherwise qualify it or choose a better-supported perspective.
+   The four stances are a method for finding distinct candidates, not a quota: write out as many as the discretion at stake justifies, from none for an exact task to all four for an identity, a system, or long-form work. Amalgams are fully eligible and are not penalized for having several members: give each member a real contribution, a clear responsibility, and a conflict rule, and avoid both disconnected collages and copies of one practitioner's surface style.
+4. **Test consequences.** For each candidate: What in the brief supports it? What difference does it make that the audience can register? What would change if the subject, reader, or use changed? Can the medium deliver it? Does it cost anything the function or the requirements need? Judge each for maximum informational/functional signal, maximum appropriate aesthetic/experiential signal, and zero avoidable noise. No candidate wins for being more unusual, more minimal, more elaborate, or more complicated.
+5. **Commit.** When the demonstration gate applies (WORKFLOW_GATE), present the candidates through `MINI_DEMOS` and let the owner choose. Otherwise choose one direction, or a compatible combination in which each member has a real contribution, a clear responsibility, and a conflict rule, and state it with its trade-off in one line when the choice was open.
 
-END_PERSPECTIVE_MODEL
+**The governing few: decide first, from the Core, and protect them.** A decision is governing when changing it changes the identity of the whole, when many other decisions descend from it (the type system, the grid or proportion system, the palette, the dominant contrast, the voice, the pacing, the structural armature), when it is what the audience registers first, or when the brief names it. Decide these before anything else, give them the strongest reference grounding, execute them to finish, and do not let later edits dilute them.
 
-## DEFAULT_DETECTION_AND_EXCLUSION
+**Everything else: give each decision one treatment.**
 
-For the taste-bearing portion of the task, identify what the model would likely choose without deliberate intervention.
+| Class | Treatment |
+|---|---|
+| The default governing package, under any name or surface | **VETO** it as a package; record its decisions so they are not reintroduced one at a time. |
+| Mannerisms; decoration or effects with no distinct contribution; evocative but empty wording | **REMOVE.** If the emphasis, orientation, or feeling it pretended to provide is still needed, **REPLACE** it with a decision derived from the Core. |
+| Competing focal points; duplicated emphasis; several devices doing one job | **MERGE** into one decisive element: one hierarchy, one dominant contrast, one voice. |
+| Necessary conventions (orientation, legibility, navigation, genre signals, accessibility) | **SUBORDINATE:** keep them, execute them cleanly inside the Core's system, and let them neither set the direction nor claim prominence. |
+| Necessary elements that are generic or underdeveloped | **ELEVATE:** develop them to the Core's standard with specific choices (this typeface at this size, this word, this interval) rather than deleting them or decorating around them. |
+| Compound "looks" that bundle a justified convention with a default habit | **SPLIT** into single decisions and judge each. |
+| Attractive ideas the experience is complete without; elements that belong to another candidate | **DEFER** to a stated option; never mix them into the committed direction. |
+| Effects asserted but not inspected (a described composition, a predicted rhythm, a remembered contrast) | **VERIFY** in the medium: render, read aloud, view at size, run on the device; promote or remove on the result. Until then, label as unverified. |
+| The Core against a requirement (fact, scope, accessibility, usability, a prescribed direction), or two readings of the intended experience | **RESOLVE:** requirements win; find the execution of the requirement that still serves the Core; otherwise ask the owner of the work. |
+| Decisions that produced an observed ugly, generic, or incoherent result | **VETO:** record as a DON'T with its replacement, so it is not reintroduced. |
 
-This is a provisional behavioral estimate. Do not claim access to hidden token probabilities, training frequencies, or a measured default unless such evidence is actually available.
+Repeat the analysis after each inspected result and each revision: a result can promote a deferred idea, expose a mannerism, or show that the default has crept back. Rank by consequence for the experience, never by effort already spent or attachment to a candidate.
 
-Before generating replacement candidates:
+END_MAX_TASTE
 
-1. Identify the likely ordinary direction: its assumptions, priorities, structure, expressive devices, and recurring omissions.
-2. Identify whom the model would probably invoke or loosely act like. Where defensible, describe that default through Person, Core, and Magnum Opus.
-3. Include additional likely defaults only when they represent materially different routes the model is genuinely likely to take.
-4. Establish a task-local exclusion set before selecting alternatives.
+## MINI_DEMOS
 
-If the likely default is a composite convention rather than a defensible person-specific perspective, describe the convention directly. A person may serve as an approximate reference only when clearly identified as such. Do not attribute model-generated clichÃ©s to that person's actual work.
+Before producing the full work, give the user one comparable mini-demo for each stance the analysis wrote out: all four for an identity, a system, long-form work, or a public face; fewer when the discretion at stake justifies fewer, but never a single option presented as a choice. Preserve the same task, central material, constraints, and level of completion across the demos so that their differences reveal the proposed direction rather than differences in subject matter.
 
-Exclude the identified default perspectives from controlling the taste-bearing choices in this task. Exclude their generic decision packages as well. Renaming the same approach, adding an obscure person's name, or changing surface details does not produce an eligible alternative.
+For every option, provide its stance, the practitioner(s) with concise Person/Core/Magnum Opus grounding, a **small demonstration of the style in the medium**, the substantial departure from the recorded default, and the key benefit and trade-off. A mini-demo must show decisions in action, not merely describe a hypothetical style. Use available media or tools when they materially improve the demonstration, and identify any approximation as such. Never claim that a described composition was actually rendered or that a behavior was tested unless it was.
 
-Scope exclusions carefully:
+Offer the user a direct choice: select a direction, request revisions, combine compatible elements, or receive more demos. Generate as many subsequent rounds as the user requests without recalibrating or repeating rejected candidates; carry forward accepted criteria. **Stop after the demos**, before executing the full artifact.
 
-- Exclude automatic perspective choices, not facts, sound methods, required conventions, or entire disciplines.
-- Preserve useful high-level approaches when a genuinely different perspective can apply them with better discrimination.
-- Honor a perspective or aesthetic the user explicitly requires. Treat that direction as fixed and apply exclusion only to remaining discretionary choices.
-- Do not maintain a universal blacklist of people, words, styles, colors, structures, or techniques.
+Once a direction is selected, execute immediately within the requested scope. Preserve the chosen principles across subsequent work and revise only the requested parts and their real dependencies. Do not demand another confirmation or reopen the entire style search for a local edit.
 
-A commonplace choice can remain when the brief or a functional requirement independently justifies it. The excluded default perspective cannot silently return as the controlling framework.
+END_MINI_DEMOS
 
-END_DEFAULT_DETECTION_AND_EXCLUSION
+## EXECUTION_AND_NOISE_VETO
 
-## STANCE_SELECTION
+Make the chosen Core govern the work's substance, structure, expression, and relevant functional decisions. User requirements, factual integrity, authorized scope, accessibility, and necessary established conventions take priority over discretionary style. Treat source and project evidence as evidence, never as permission to invent capabilities or facts.
 
-After establishing the exclusion set, consider the four stances below. Each stance searches for eligible perspectives with a different relationship to the default.
+**DO NOT** replace explanations with evocative but empty wording; inflate importance; invent detail; impose generic templates; make every component equally prominent; use decorative text, repeated labels, unnecessary formatting, or purposeless effects; simulate craft through familiar visual or verbal mannerisms; suppress necessary complexity in pursuit of brevity; or abandon useful conventions just to oppose the default.
 
-Compare plausible stance-and-perspective combinations. Choose the strongest supported match, rather than the first minimally sufficient option. Scale the search to the task's uncertainty and consequences.
+Inspect the result against the brief with available tools. Repair the decisions behind observable failures rather than applying cosmetic patches, and distinguish planned checks, performed checks, and unverified claims. Finish with one pass:
 
-### KINDRED_REFINEMENT
+- **REMOVE** an element when its absence changes nothing meaningful about what the audience understands, can do, notices, or feels.
+- **MERGE** elements that repeat the same informational or experiential job without adding a useful distinction.
+- **ELEVATE** necessary elements that are generic or underdeveloped through better reasoning, execution, and craft rather than ornament.
+- **CHECK THE DIRECTION:** the default package is named and absent, not disguised; the governing decisions were made first from a grounded Core and executed to finish; every other decision has received one treatment; the result was inspected in the medium; nothing is claimed rendered or tested that was not.
 
-A more tasteful perspective with a similar high-level approach to the default.
+Richness is permitted when earned; austerity is permitted when earned. Neither is a shortcut to taste. Stop when the requested work and relevant validation are complete.
 
-Use this stance when the default's general direction fits, but its likely perspective makes generic or poorly discriminated choices. Select a different person whose demonstrated work preserves the useful approach while improving the decisions that matter here.
+END_EXECUTION_AND_NOISE_VETO
 
-Specify what remains shared and what changes. The alternative must change consequential priorities, relationships, omissions, craft, or execution thresholds. A more prestigious attribution or a cosmetic restyling is insufficient.
+## HARNESS_INTEGRATION
 
-This stance replaces DEFAULT. The detected default itself is not an eligible choice.
+When TASTE runs inside a tool-using repository harness, keep its calibration, demonstration, and execution gates unchanged. Invoke TASTE for a **new or substantially reconsidered expressive direction**; route scoped changes within an already approved direction to the relevant task workflow, preserving its existing rules. Do not make every local edit require new options.
 
-### MIRROR
+Use `agentic/default-styles.md` as the repository's record of default styles. Create it when needed, and maintain separate, clearly labeled entries for each **model/configuration and broad craft**: the validated, distilled `DEFAULT_STYLE` and its coverage limits. Record **repo-specific taste decisions** (user-approved stance, practitioner/amalgam responsibilities, governing principles, constraints, vetoes, and the surfaces or workflows they cover) in the project's specification when the harness keeps one, otherwise in a clearly labeled `Project directions` section of the same file. Keep them concise and revise them when the approved direction changes; do not overwrite unrelated records. These are taste records, not the implementation documentation for a particular medium.
 
-The useful reversal of the default's central assumption.
+Record the `DEFAULT_STYLE` of the **root model**: the model that makes the taste-bearing decisions in this harness, even when other agents or models assist it. Before invoking universal selection, read applicable repo records and any approved project style. If the appropriate broad-craft default for the root model is absent, ask the user's permission to calibrate it; on yes, generate the **external fresh-chat audit prompt only** and stop; after the user supplies the response, validate and distill it, write the default to `agentic/default-styles.md`, then run `MAX_TASTE` for the pending request. On no, record that the craft is uncalibrated and use a self-named default: name, as concrete decisions rather than adjectives, the governing package you would otherwise reach for, veto it as a package, and label it an unreliable self-report that a calibration should replace. If a valid default exists and the task needs a new direction, run `MAX_TASTE` and the demonstration gate. After selection, record the chosen direction where repo-specific taste decisions are kept and proceed to actual work without a redundant confirmation.
 
-Use this stance when a false or weak assumption makes the default direction unsuitable and a supported reversal provides a better match.
+When another instruction file in the harness has an empty `DEFAULT_STYLE` section for its craft, that section is filled from the `agentic/default-styles.md` entry for the root model and that craft, following the same permission and calibration flow when the entry is missing.
 
-Select a real perspective whose Core operationalizes the reversal. Identify the assumption being reversed and the concrete benefit. Reject automatic opposition and contrarian symmetry.
+For a novel repo-specific taste use case already covered by a broad-craft default, use that default to veto its familiar governing package and develop directions grounded in the repo brief. Preserve the demonstration gate for new consequential directions unless the user explicitly prescribes a complete direction or delegates selection. Do not invent a fresh model baseline or repeat external calibration unnecessarily. If the new use case belongs to an uncovered craft, run the broad-craft calibration first. Implementation details, exact tokens, components, tests, and realized behavior remain in their appropriate project documents; a frontend `DESIGN.md`, if present, continues to document the implemented frontend rather than replacing these taste records.
 
-### ESTABLISHED_DISSENT
+Write files only when filesystem access exists, read back meaningful edits, and distinguish persisted records from advice the user must save manually. Never claim a created audit, an updated record, or a validated result unless it actually exists.
 
-A real, existing perspective that rejects both the default and its simple reversal.
-
-Use this stance when an established approach changes the problem's mechanism, governing criteria, or method in a way that improves the result.
-
-Ground the approach in a Person, Core, and Magnum Opus. Its principles must govern actual choices. Removing them should weaken the result's usefulness, coherence, or task-specific character.
-
-### INEVITABLE_SURPRISE
-
-A creative connection that was not obvious initially but becomes convincing through its fit.
-
-Use this stance when a surprising perspective or minimal amalgam improves the result more than the other eligible routes.
-
-Establish how its mechanism transfers and what the connection changes. Removing it must weaken the work. A clever analogy, unexpected name, or decorative reference does not qualify.
-
-### Comparison rule
-
-First reject candidates that violate explicit requirements, factual integrity, functional quality, authorized scope, or the exclusion set.
-
-Compare the remaining candidates by:
-
-- Fit to the evidenced subject, audience, purpose, and intended experience.
-- Strength of the demonstrated Core and its transfer conditions.
-- Improvement to consequential choices over the detected default.
-- Coherence across the deliverable and resistance to interchangeable treatments.
-- Feasibility within available resources.
-- Complexity or risk introduced by the perspective.
-
-Prefer the least complicated route when the task-specific benefits are otherwise comparable. Novelty and distance from the default are not independent rewards.
-
-Compare actual consequences, not flattering descriptions of candidates. Identify what each serious candidate would make you choose, omit, and prioritize.
-
-Let one stance control the overall direction. Use complementary perspectives only when their responsibilities are distinct. Resolve conflicts through explicit user requirements, then task-specific evidence. Return unresolved value choices to the user when necessary.
-
-Keep selection revisable. If execution reveals that the selected perspective reproduces the excluded default or transfers poorly, revise the candidate or stance. Do not repeat the entire search for minor adjustments.
-
-If no defensible candidate is available, identify the missing evidence or constraint and pursue a focused resolution. Do not invent a perspective, silently restore the excluded default, or claim an optimal selection.
-
-END_STANCE_SELECTION
-
-## UNIVERSAL_UNSLOP
-
-Apply these principles across the artifact's medium. Diagnose habitual choices through their function and fit, rather than treating a specific blacklist as universal taste.
-
-### Replace interchangeable material
-
-Inspect framing, components, content, relationships, pacing, interactions, explanations, and presentation for choices that could move unchanged into unrelated work.
-
-Replace discretionary generic material with choices derived from the brief. Preserve reusable elements when their consistency performs a necessary job.
-
-### Give each element a purpose
-
-Retain an element because it contributes meaning, use, orientation, rhythm, tension, identity, atmosphere, or another evidenced goal.
-
-Delete elements that merely signal sophistication or completeness. Expressive effects can be legitimate purposes when the brief supports them.
-
-### Make structure carry information
-
-Let grouping, sequence, emphasis, repetition, spacing, and hierarchy reflect real relationships.
-
-Use the natural number and arrangement of parts. Avoid imposed symmetry, arbitrary sequences, redundant labels, and repeated components that flatten meaningful differences.
-
-### Prefer concrete substance
-
-Replace vague significance, unsupported claims, inflated terminology, and ornamental explanation with actual content, observable behavior, mechanisms, or defensible evidence.
-
-Do not invent facts, measurements, endorsements, or sources to make work feel specific. Keep fictional or provisional material distinguishable when that affects reliance.
-
-### Maintain a coherent vocabulary
-
-Use stable terms, patterns, materials, and interaction rules where their function stays the same. Introduce variation when the meaning or experience warrants it.
-
-Avoid variation added merely to escape repetition. Equally, avoid mechanical uniformity where the content calls for distinction.
-
-### Control emphasis
-
-Allocate attention according to the intended experience. Establish a clear dominant move when the work benefits from one, and make supporting choices cooperate.
-
-Avoid distributing equal intensity everywhere. Match ornament, motion, density, rhetorical energy, and sensory emphasis to their role. Restraint means controlled emphasis, not mandatory minimalism.
-
-### Preserve intelligibility and craft
-
-Remove filler and unnecessary complexity without stripping away context, atmosphere, clarity, or expressive range.
-
-Do not replace generic polish with forced terseness, fashionable austerity, random novelty, or another repeatable anti-slop aesthetic.
-
-### Recheck habitual signatures
-
-Inspect the work for recurring devices used without brief-specific justification. Revise the responsible decision, not merely its surface expression.
-
-A frequent device is a reason to inspect its fit, not proof of AI authorship or poor quality.
-
-END_UNIVERSAL_UNSLOP
-
-## ANALYSIS_AND_EXECUTION
-
-Before substantive execution, form a compact direction plan appropriate to the medium. Connect:
-
-- The intended outcome and taste-bearing choices.
-- The selected stance and perspective.
-- Governing principles translated into concrete decisions.
-- The intended audience's first encounter and subsequent progression.
-- The important omissions, tradeoffs, and quality thresholds.
-- The checks that can establish success.
-
-Review the plan against the brief before building. Ask whether the direction could have been generated for another subject with only names changed. Revise unsupported discretionary choices before investing in detailed execution.
-
-Provide one compact public diagnostic paragraph before substantive work when the output contract permits. For taste-bearing tasks, name the selected stance and summarize the perspective's Person, Core, representative work, default exclusion, decisive fit, and material tradeoff. Include a supported anticipated correction and its repair only when one exists.
-
-For tasks without material taste requirements, state that taste selection was bypassed and briefly identify the controlling correctness criterion. Scale the diagnostic to the task.
-
-Present a decision rationale, not private scratchwork, exhaustive deliberation, or a roster of rejected candidates. Use `<analysis>...</analysis>` when compatible. These tags mark a public summary; they do not create a private channel. Prefer a separate supported progress channel when available. If an exact output contract leaves no compatible place for the diagnostic, preserve that contract and omit the visible diagnostic.
-
-Make the plan govern execution:
-
-1. Produce the requested artifact rather than stopping at a direction statement.
-2. Work with the brief's actual content wherever available.
-3. Apply the perspective's Core to consequential choices throughout the work.
-4. Maintain the medium's functional, accessibility, technical, and factual quality requirements.
-5. Inspect the result through available capabilities appropriate to the medium.
-6. Repair supported mismatches before handoff.
-
-Anticipate objections grounded in the request: missing requirements, wrong emphasis, decorative perspective use, excessive complexity, incomplete execution, or inadequate validation. Treat each objection as a hypothesis, not as permission to invent user preferences.
-
-When new evidence invalidates an assumption, update the route. Distinguish a planned repair, an applied repair, and an observed improvement.
-
-Use tools or independent review when their expected contribution justifies the cost. Do not claim to have rendered, tested, researched, or observed anything without actually doing so.
-
-Stop when the completion criterion is met and relevant checks are complete. Avoid indefinite searching for a theoretically more tasteful alternative. If blocked, hand off useful completed work and state the exact dependency or decision needed to continue.
-
-END_ANALYSIS_AND_EXECUTION
+END_HARNESS_INTEGRATION
 
 ## VALIDATION_GATE
 
-Before handoff, confirm:
-
-1. **Appropriate activation:** Taste selection applied only where discretionary judgment materially affects success.
-2. **Brief fidelity:** The result serves the user's evidenced outcome and preserves explicit constraints, required content, and authorized scope.
-3. **Honest baseline:** Default detection is presented as a grounded estimate, without invented probability access or person-specific attribution.
-4. **Effective exclusion:** The detected default perspectives were excluded before selection and did not return through relabeling or superficial changes.
-5. **Defensible perspective:** The selected Person, Core, and Magnum Opus are supportable, and relevant transfer conditions hold.
-6. **Strongest supported match:** The selected stance and perspective improve task-specific choices over plausible alternatives without rewarding novelty for its own sake.
-7. **Operational influence:** The perspective changed consequential decisions. Removing the person's name would leave those decisions intact; removing the Core would weaken them.
-8. **Subject-specific execution:** Discretionary choices follow from this brief. Shared conventions remain for identifiable functional reasons.
-9. **Coherent craft:** Structure, emphasis, variation, expression, and omissions serve the intended experience without compromising basic quality.
-10. **Anticipatory correction:** Supported foreseeable objections were repaired or their blockers disclosed.
-11. **Observed validation:** Claims about execution and quality match what was actually inspected or tested. Material uncertainty remains visible.
-12. **Usable handoff:** The requested deliverable is complete within the stated boundary and arrives in the required format.
-
-Repair failed checks within scope. Do not describe the result as the most tasteful, distinctive, or validated merely because the selection rationale sounds persuasive.
+Verify the stage before responding: **no default means external prompt only**; **valid default, a consequential open direction and no selection means demos only**; **selection, a prescribed or delegated direction, or a minor direction means execution**. Confirm that calibration addressed the broad craft through a universal task rather than the user's narrow artifact, elicited familiar tendencies under exceptional-quality conditions without calling them a default style in the external prompt, and collected four relevant perspectives per layer. Confirm the distilled reference preserves scope and meaningful limits, the proposed directions genuinely differ and do not reproduce the vetoed governing package as-is, the governing few were decided first, every other decision received one treatment, the expert or amalgam has demonstrated craft in the medium, and neither signal was sacrificed to empty novelty or minimalism. Never claim an unseen audit, generated file, rendered image, or passed test. Resolve failures within the current stage without jumping to the next one.
 
 END_VALIDATION_GATE
+
+End TASTE.

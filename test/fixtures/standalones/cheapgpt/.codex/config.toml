@@ -1,0 +1,11 @@
+model = "x"
+
+# cheapgpt:multi-agent-v2:start
+[features.multi_agent_v2]
+enabled = true
+wait_agent_enabled = true
+expose_spawn_agent_model_overrides = true
+min_wait_timeout_ms = 60000
+default_wait_timeout_ms = 1800000
+max_wait_timeout_ms = 3600000
+# cheapgpt:multi-agent-v2:end
