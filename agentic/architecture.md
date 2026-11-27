@@ -1,4 +1,4 @@
-TOKENS_USED: ~2317
+TOKENS_USED: ~2449
 ## Overview
 Dependency-free Node ≥22 ESM CLI (`bin/bridgecode.mjs` → `src/cli.mjs`), the engine (`engine/engine.mjs`) and a Markdown payload. Authoring output is the sibling `../condensation/` (`shared/bridgecode/`, `shared/engine/`, `roles/`, `codex/`, `claude/`, `exp/`), usable locally as is; the generalists and guides are generated into it by `../build/gen.mjs` and `../build/human.mjs` from `../build/generalist.src.md`. `npm run sync:payload` copies condensation here. Commands: `npm run sync:payload`, `npm run build:manifest`, `npm test`, `npm run test:release -- --output release`, `node tools/flow-diagram.mjs` (README diagram). Tag `v<version>` triggers `.github/workflows/release.yml`, which tests and packs the exact artifact and attaches it to the existing GitHub release; it never publishes to npm.
 ## Tree
@@ -51,7 +51,7 @@ Dependency-free Node ≥22 ESM CLI (`bin/bridgecode.mjs` → `src/cli.mjs`), the
 - AV-04: DON'T remove a standalone cheapGPT or cLoop without the user's yes, or remove anything its own uninstaller would not | two orchestrators in one project; deleting what the user owns | print the plan and exit 2; remove only with `--replace-standalones` (the CLI cannot verify the yes, so the agent asks)
 - AV-05: DON'T parse extension Markdown at install time | prose drift broke the role tables | vendored `roles/*.json` checked against a pinned commit
 ## Budgets
-- Production LOC ~2187 (19 files), test LOC ~1262 (14 files), ratio ~58%, counted over tracked and new files before the 4.6.0 commit; `metrics` counts git-tracked files only, so it is re-run after that commit. `npm test` 109 tests, 0 skipped; `npm run test:release` 1; the engine walks take most of the suite time.
+- Production LOC 2213 (19 files), test LOC 1294 (14 files), ratio 59%, by `bridgecode metrics` on the 4.6.0 commit (it counts git-tracked files only). `npm test` 109 tests, 0 skipped; `npm run test:release` 1; the engine walks take most of the suite time.
 - Floor above the 30% target: each lifecycle, safety and migration case is the only checker of a G1 criterion for one edition or predecessor version, and each scripted engine task the only checker of a G7 criterion.
 ## Harness
 This package repository is not itself a Bridgecode installation; it dogfoods the memory templates only. Historical authoring reference (not runtime policy) lives in `agentic/reference/`. 4.5.x was never published, so updates come from 4.1.0–4.3.2 only; the release after this one adds `legacy/<this version>.json`.

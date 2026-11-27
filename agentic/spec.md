@@ -1,4 +1,4 @@
-TOKENS_USED: ~1451
+TOKENS_USED: ~1505
 ## Intent
 `@bridgecode/cli` installs, updates, verifies and removes Bridgecode in a project: one agent policy (the generalist) for Codex or Claude Code, the engine that holds a task's state and refuses a skipped step, twelve on-demand specialists, optional cheapGPT and cLoop role assignments, hooks, and project memory the agent keeps. Users are coding agents acting on a user's request, and the users who review what they install. It exists so the policy and the engine arrive byte-exact, can be upgraded without losing project content, and give the agent deterministic numbers and refusals it must not estimate or skip.
 ## Inputs
