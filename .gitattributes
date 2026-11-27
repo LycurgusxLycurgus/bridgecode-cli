@@ -6,3 +6,4 @@ editions/** -text
 *.json text eol=lf
 *.md text eol=lf
 *.yml text eol=lf
+test/fixtures/** -text
